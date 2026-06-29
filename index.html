@@ -1,1 +1,216 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IB PYP 학습자상 자가진단</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+.app { max-width: 620px; width: 100%; }
+h1 { font-size: 20px; font-weight: 600; color: #1a1a18; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888; margin-bottom: 2rem; }
+.progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; margin-bottom: 2rem; }
+.progress-fill { height: 100%; background: #185FA5; border-radius: 2px; transition: width 0.4s ease; }
+.section-label { font-size: 12px; color: #aaa; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.question-card { background: #fff; border: 1px solid #e8e8e6; border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.question-text { font-size: 17px; font-weight: 500; color: #1a1a18; line-height: 1.6; margin-bottom: 1.25rem; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option-btn { background: #fafaf8; border: 1px solid #e8e8e6; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; font-size: 14px; color: #2c2c2a; line-height: 1.5; transition: all 0.15s; }
+.option-btn:hover { border-color: #185FA5; background: #e8f1fb; }
+.option-btn.selected { border-color: #185FA5; background: #e8f1fb; color: #0c447c; font-weight: 500; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+.nav-btn { background: transparent; border: 1px solid #ccc; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 14px; cursor: pointer; color: #444; }
+.nav-btn:hover { background: #f0f0ee; }
+.nav-btn.primary { background: #185FA5; color: #fff; border-color: transparent; }
+.nav-btn.primary:hover { background: #0c447c; }
+.nav-btn:disabled { opacity: 0.35; cursor: default; }
+.q-count { font-size: 13px; color: #aaa; }
+.result-header { text-align: center; padding: 1.5rem 0 1rem; }
+.badge { font-size: 52px; display: block; margin-bottom: 0.5rem; }
+.result-title { font-size: 14px; color: #888; margin-bottom: 0.25rem; }
+.top-name { font-size: 24px; font-weight: 600; color: #1a1a18; margin-bottom: 0.25rem; }
+.top-en { font-size: 14px; color: #185FA5; margin-bottom: 1.5rem; }
+.top-result { background: #e8f1fb; border: 1px solid #b5d4f4; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+.desc-text { font-size: 14px; color: #2c4a6e; line-height: 1.7; }
+.scores-title { font-size: 13px; color: #aaa; margin-bottom: 10px; }
+.scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+.score-card { background: #fff; border: 1px solid #e8e8e6; border-radius: 10px; padding: 0.75rem 0.9rem; }
+.score-card.top { border-color: #185FA5; background: #e8f1fb; }
+.score-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.score-name { font-size: 12px; font-weight: 500; color: #2c2c2a; }
+.score-val { font-size: 12px; color: #888; }
+.score-bar { height: 3px; background: #e0e0e0; border-radius: 2px; }
+.score-fill { height: 100%; border-radius: 2px; }
+.restart-btn { width: 100%; padding: 0.85rem; background: #fff; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; cursor: pointer; color: #444; }
+.restart-btn:hover { background: #f5f5f3; }
+@media (max-width: 480px) { .scores-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🎓 IB PYP 학습자상 자가진단</h1>
+  <p class="subtitle">10가지 질문에 답하고 나의 대표 학습자상을 찾아보세요</p>
+  <div id="root"></div>
+</div>
+<script>
+const profiles = [
+  { id: "inquirer", name: "탐구하는 사람", emoji: "🔍", en: "Inquirer", color: "#185FA5",
+    desc: "호기심을 키우고 탐구와 연구 기술을 발전시켜요. 스스로 배우는 것을 좋아하고 평생 학습에 대한 열정을 가져요." },
+  { id: "knowledgeable", name: "지식이 풍부한 사람", emoji: "📚", en: "Knowledgeable", color: "#0F6E56",
+    desc: "중요한 개념을 깊이 탐구하고 다양한 분야에 걸쳐 넓은 지식을 쌓아요." },
+  { id: "thinker", name: "생각하는 사람", emoji: "💡", en: "Thinker", color: "#534AB7",
+    desc: "복잡한 문제를 비판적·창의적으로 분석하고 책임감 있는 행동을 이끌어 내요." },
+  { id: "communicator", name: "소통하는 사람", emoji: "💬", en: "Communicator", color: "#BA7517",
+    desc: "여러 언어와 다양한 방식으로 자신감 있게 생각과 정보를 표현하고 협력해요." },
+  { id: "principled", name: "원칙이 있는 사람", emoji: "⚖️", en: "Principled", color: "#3C3489",
+    desc: "정직하고 강한 도덕적 신념으로 행동하며 자신의 행동에 책임을 져요." },
+  { id: "open-minded", name: "열린 마음의 사람", emoji: "🌍", en: "Open-minded", color: "#993C1D",
+    desc: "다른 사람의 관점, 가치, 전통을 이해하고 다양한 경험을 찾아 나서요." },
+  { id: "caring", name: "배려하는 사람", emoji: "❤️", en: "Caring", color: "#993556",
+    desc: "공감과 존중을 보여주고 다른 사람과 주변 세계에 긍정적 변화를 만들어요." },
+  { id: "risk-taker", name: "도전하는 사람", emoji: "🚀", en: "Risk-taker", color: "#3B6D11",
+    desc: "불확실한 상황에도 자신감과 창의성을 발휘하며 새로운 것에 도전해요." },
+  { id: "balanced", name: "균형 잡힌 사람", emoji: "☯️", en: "Balanced", color: "#0C447C",
+    desc: "자신과 타인의 몸·마음·감정적 균형을 이해하여 전인적 행복을 추구해요." },
+  { id: "reflective", name: "성찰하는 사람", emoji: "🪞", en: "Reflective", color: "#5F5E5A",
+    desc: "자신의 학습과 경험을 깊이 돌아보며 지속적인 성장을 추구해요." }
+];
+const questions = [
+  { text: "새로운 것을 배울 때 나는...", options: [
+    { text: "왜 그런지 계속 더 파고들며 질문한다", profiles: ["inquirer", "thinker"] },
+    { text: "이미 아는 것들과 연결 지어 생각한다", profiles: ["knowledgeable", "thinker"] },
+    { text: "친구에게 설명하거나 함께 이야기 나눈다", profiles: ["communicator", "caring"] },
+    { text: "내가 얼마나 이해했는지 스스로 점검한다", profiles: ["reflective", "balanced"] }
+  ]},
+  { text: "그룹 프로젝트에서 나는 주로...", options: [
+    { text: "모두가 공정하게 역할을 나누도록 노력한다", profiles: ["principled", "balanced"] },
+    { text: "팀 분위기를 이끌고 아이디어를 제안한다", profiles: ["risk-taker", "communicator"] },
+    { text: "팀원의 어려움을 먼저 살피고 도와준다", profiles: ["caring", "open-minded"] },
+    { text: "자료를 깊이 조사해 팀에 기여한다", profiles: ["knowledgeable", "inquirer"] }
+  ]},
+  { text: "나는 사회 문제를 접했을 때...", options: [
+    { text: "그 근본 원인을 파악하려 분석한다", profiles: ["thinker", "inquirer"] },
+    { text: "직접 돕거나 캠페인에 참여하고 싶다", profiles: ["caring", "principled"] },
+    { text: "다른 나라의 사례를 찾아 비교해 본다", profiles: ["open-minded", "knowledgeable"] },
+    { text: "내가 일상에서 할 수 있는 것부터 실천한다", profiles: ["balanced", "reflective"] }
+  ]},
+  { text: "어려운 시험이나 발표를 앞두고 나는...", options: [
+    { text: "긴장되지만 잘 해낼 수 있다고 스스로를 믿는다", profiles: ["risk-taker", "balanced"] },
+    { text: "지금까지 준비한 것을 체계적으로 복습한다", profiles: ["reflective", "knowledgeable"] },
+    { text: "친구들과 함께 준비하며 서로 도움을 준다", profiles: ["communicator", "caring"] },
+    { text: "더 깊이 공부해서 완벽히 이해하려 한다", profiles: ["inquirer", "thinker"] }
+  ]},
+  { text: "누군가 나와 다른 의견을 강하게 말할 때 나는...", options: [
+    { text: "그 사람의 입장에서 먼저 이해해 보려 한다", profiles: ["open-minded", "caring"] },
+    { text: "논리적으로 내 생각을 설명하며 토론한다", profiles: ["thinker", "communicator"] },
+    { text: "양쪽 의견의 장단점을 정리해 본다", profiles: ["balanced", "principled"] },
+    { text: "더 많은 자료를 찾아서 판단한다", profiles: ["knowledgeable", "inquirer"] }
+  ]},
+  { text: "자유 시간이 주어진다면 나는...", options: [
+    { text: "궁금했던 주제를 깊이 탐구해 본다", profiles: ["inquirer", "knowledgeable"] },
+    { text: "창작 활동이나 새로운 도전을 해 본다", profiles: ["risk-taker", "thinker"] },
+    { text: "지역 사회를 위한 봉사나 활동에 참여한다", profiles: ["caring", "principled"] },
+    { text: "운동, 독서, 명상 등 균형 잡힌 활동을 한다", profiles: ["balanced", "reflective"] }
+  ]},
+  { text: "발표나 글쓰기에서 나는...", options: [
+    { text: "상대방이 이해하기 쉽게 구성하는 데 집중한다", profiles: ["communicator", "thinker"] },
+    { text: "내 주장의 근거를 탄탄히 뒷받침하려 한다", profiles: ["principled", "knowledgeable"] },
+    { text: "독창적인 표현이나 형식을 시도해 본다", profiles: ["risk-taker", "open-minded"] },
+    { text: "마친 후 잘된 점과 개선점을 돌아본다", profiles: ["reflective", "balanced"] }
+  ]},
+  { text: "나는 실수를 했을 때...", options: [
+    { text: "왜 그 실수가 생겼는지 원인을 찾는다", profiles: ["reflective", "thinker"] },
+    { text: "솔직하게 인정하고 바로잡으려 노력한다", profiles: ["principled", "caring"] },
+    { text: "실수를 두려워하지 않고 다시 도전한다", profiles: ["risk-taker", "balanced"] },
+    { text: "비슷한 사례를 찾아보며 배운다", profiles: ["knowledgeable", "inquirer"] }
+  ]},
+  { text: "다른 문화나 생각을 접했을 때 나는...", options: [
+    { text: "열린 마음으로 직접 경험해 보고 싶다", profiles: ["open-minded", "risk-taker"] },
+    { text: "나의 문화와 비교하며 깊이 이해하려 한다", profiles: ["reflective", "knowledgeable"] },
+    { text: "그 배경과 역사를 공부하고 싶다", profiles: ["inquirer", "thinker"] },
+    { text: "그 문화의 사람들과 직접 대화하고 싶다", profiles: ["communicator", "caring"] }
+  ]},
+  { text: "나는 평소에...", options: [
+    { text: "건강, 감정, 학습이 서로 연결되어 있다고 생각한다", profiles: ["balanced", "reflective"] },
+    { text: "내가 믿는 가치관에 따라 일관되게 행동한다", profiles: ["principled", "open-minded"] },
+    { text: "아직 시도하지 않은 것들에 도전하고 싶다", profiles: ["risk-taker", "inquirer"] },
+    { text: "주변 사람이 잘 되도록 돕는 것이 중요하다고 생각한다", profiles: ["caring", "communicator"] }
+  ]}
+];
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+let scores = {};
+profiles.forEach(p => scores[p.id] = 0);
+
+function renderProgress() {
+  const pct = (current / questions.length) * 100;
+  return `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+}
+function renderQuestion() {
+  const q = questions[current];
+  const opts = q.options.map((o, i) => {
+    const sel = answers[current] === i ? 'selected' : '';
+    return `<button class="option-btn ${sel}" onclick="selectOpt(${i})">${o.text}</button>`;
+  }).join('');
+  const canNext = answers[current] !== null;
+  const isLast = current === questions.length - 1;
+  document.getElementById('root').innerHTML = `
+    ${renderProgress()}
+    <div class="section-label">질문 ${current + 1} / ${questions.length}</div>
+    <div class="question-card">
+      <div class="question-text">${q.text}</div>
+      <div class="options">${opts}</div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" onclick="prevQ()" ${current === 0 ? 'disabled' : ''}>← 이전</button>
+      <span class="q-count">${Math.round((current/questions.length)*100)}% 완료</span>
+      ${canNext
+        ? `<button class="nav-btn primary" onclick="nextQ()">${isLast ? '결과 보기 →' : '다음 →'}</button>`
+        : `<button class="nav-btn" disabled>선택 후 다음</button>`}
+    </div>`;
+}
+function selectOpt(idx) {
+  const prev = answers[current];
+  if (prev !== null) questions[current].options[prev].profiles.forEach(p => scores[p]--);
+  answers[current] = idx;
+  questions[current].options[idx].profiles.forEach(p => scores[p]++);
+  renderQuestion();
+}
+function prevQ() { if (current > 0) { current--; renderQuestion(); } }
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current < questions.length - 1) { current++; renderQuestion(); }
+  else renderResult();
+}
+function renderResult() {
+  const sorted = profiles.map(p => ({ ...p, score: scores[p.id] })).sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const scoreCards = sorted.map(p => {
+    const barW = Math.min(100, Math.max(0, Math.round((p.score / (questions.length * 0.6)) * 100)));
+    return `<div class="score-card ${p.id === top.id ? 'top' : ''}">
+      <div class="score-top"><span class="score-name">${p.emoji} ${p.name}</span><span class="score-val">${p.score}점</span></div>
+      <div class="score-bar"><div class="score-fill" style="width:${barW}%;background:${p.color}"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('root').innerHTML = `
+    <div class="result-header">
+      <span class="badge">${top.emoji}</span>
+      <div class="result-title">나의 대표 학습자상</div>
+      <div class="top-name">${top.name}</div>
+      <div class="top-en">${top.en}</div>
+    </div>
+    <div class="top-result"><div class="desc-text">${top.desc}</div></div>
+    <div class="scores-title">전체 학습자상 점수</div>
+    <div class="scores-grid">${scoreCards}</div>
+    <button class="restart-btn" onclick="restart()">↺ 다시 시작하기</button>`;
+}
+function restart() {
+  current = 0; answers = new Array(questions.length).fill(null); scores = {};
+  profiles.forEach(p => scores[p.id] = 0); renderQuestion();
+}
+renderQuestion();
+</script>
+</body>
+</html>
