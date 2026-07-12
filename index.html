@@ -193,7 +193,9 @@ svg.radar { display: block; width: 100%; height: auto; overflow: visible; }
 .radar-vertex { fill: var(--pc); stroke: var(--surface); stroke-width: 2; }
 .radar-hit { fill: transparent; cursor: pointer; }
 .radar-hit:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.radar-emoji { font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+.radar-axis-label { text-anchor: middle; }
+.radar-axis-emoji { font-size: 13px; }
+.radar-axis-name { font-size: 9px; font-weight: 700; fill: var(--ink-soft); letter-spacing: 0.01em; }
 .radar-tooltip { position: absolute; pointer-events: none; left: 0; top: 0; transform: translate(-50%, calc(-100% - 10px)); background: var(--ink); color: var(--bg); font-size: 12px; font-weight: 600; padding: 0.4rem 0.6rem; border-radius: 8px; box-shadow: var(--shadow); opacity: 0; transition: opacity .12s; white-space: nowrap; z-index: 5; }
 .radar-tooltip.show { opacity: 1; }
 .radar-caption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 0.5rem; }
@@ -232,25 +234,25 @@ footer.hint { text-align: center; font-size: 12px; color: var(--ink-faint); marg
 </div>
 <script>
 const profiles = [
-  { id: "inquirer", name: "탐구하는 사람", emoji: "🔍", en: "Inquirer", color: "#185FA5",
+  { id: "inquirer", name: "탐구하는 사람", short: "탐구", emoji: "🔍", en: "Inquirer", color: "#185FA5",
     desc: "호기심을 키우고 탐구와 연구 기술을 발전시켜요. 스스로 배우는 것을 좋아하고 평생 학습에 대한 열정을 가져요." },
-  { id: "knowledgeable", name: "지식이 풍부한 사람", emoji: "📚", en: "Knowledgeable", color: "#0F6E56",
+  { id: "knowledgeable", name: "지식이 풍부한 사람", short: "지식", emoji: "📚", en: "Knowledgeable", color: "#0F6E56",
     desc: "중요한 개념을 깊이 탐구하고 다양한 분야에 걸쳐 넓은 지식을 쌓아요." },
-  { id: "thinker", name: "생각하는 사람", emoji: "💡", en: "Thinker", color: "#534AB7",
+  { id: "thinker", name: "생각하는 사람", short: "생각", emoji: "💡", en: "Thinker", color: "#534AB7",
     desc: "복잡한 문제를 비판적·창의적으로 분석하고 책임감 있는 행동을 이끌어 내요." },
-  { id: "communicator", name: "소통하는 사람", emoji: "💬", en: "Communicator", color: "#BA7517",
+  { id: "communicator", name: "소통하는 사람", short: "소통", emoji: "💬", en: "Communicator", color: "#BA7517",
     desc: "여러 언어와 다양한 방식으로 자신감 있게 생각과 정보를 표현하고 협력해요." },
-  { id: "principled", name: "원칙이 있는 사람", emoji: "⚖️", en: "Principled", color: "#3C3489",
+  { id: "principled", name: "원칙이 있는 사람", short: "원칙", emoji: "⚖️", en: "Principled", color: "#3C3489",
     desc: "정직하고 강한 도덕적 신념으로 행동하며 자신의 행동에 책임을 져요." },
-  { id: "open-minded", name: "열린 마음의 사람", emoji: "🌍", en: "Open-minded", color: "#993C1D",
+  { id: "open-minded", name: "열린 마음의 사람", short: "열린마음", emoji: "🌍", en: "Open-minded", color: "#993C1D",
     desc: "다른 사람의 관점, 가치, 전통을 이해하고 다양한 경험을 찾아 나서요." },
-  { id: "caring", name: "배려하는 사람", emoji: "❤️", en: "Caring", color: "#993556",
+  { id: "caring", name: "배려하는 사람", short: "배려", emoji: "❤️", en: "Caring", color: "#993556",
     desc: "공감과 존중을 보여주고 다른 사람과 주변 세계에 긍정적 변화를 만들어요." },
-  { id: "risk-taker", name: "도전하는 사람", emoji: "🚀", en: "Risk-taker", color: "#3B6D11",
+  { id: "risk-taker", name: "도전하는 사람", short: "도전", emoji: "🚀", en: "Risk-taker", color: "#3B6D11",
     desc: "불확실한 상황에도 자신감과 창의성을 발휘하며 새로운 것에 도전해요." },
-  { id: "balanced", name: "균형 잡힌 사람", emoji: "☯️", en: "Balanced", color: "#0C447C",
+  { id: "balanced", name: "균형 잡힌 사람", short: "균형", emoji: "☯️", en: "Balanced", color: "#0C447C",
     desc: "자신과 타인의 몸·마음·감정적 균형을 이해하여 전인적 행복을 추구해요." },
-  { id: "reflective", name: "성찰하는 사람", emoji: "🪞", en: "Reflective", color: "#5F5E5A",
+  { id: "reflective", name: "성찰하는 사람", short: "성찰", emoji: "🪞", en: "Reflective", color: "#5F5E5A",
     desc: "자신의 학습과 경험을 깊이 돌아보며 지속적인 성장을 추구해요." }
 ];
 const questions = [
@@ -419,7 +421,7 @@ function renderResult() {
     <footer class="hint">이 링크를 그대로 보내면 누구든 바로 진단을 시작할 수 있어요.</footer>`;
 }
 function buildRadar(top, maxScore) {
-  const cx = 120, cy = 120, maxR = 82, n = profiles.length;
+  const cx = 130, cy = 130, maxR = 78, n = profiles.length;
   const angleFor = i => (360 / n) * i;
   const pointAt = (angleDeg, r) => {
     const rad = (angleDeg - 90) * Math.PI / 180;
@@ -448,11 +450,14 @@ function buildRadar(top, maxScore) {
         onfocus="showRadarTip(this,'${label.replace(/'/g, "\\'")}')" onblur="hideRadarTip(this)"></circle>`;
   }).join('');
   const labels = profiles.map((p, i) => {
-    const [x, y] = pointAt(angleFor(i), maxR + 18);
-    return `<text class="radar-emoji" x="${x.toFixed(1)}" y="${y.toFixed(1)}">${p.emoji}</text>`;
+    const [x, y] = pointAt(angleFor(i), maxR + 25);
+    return `<text class="radar-axis-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}">
+      <tspan class="radar-axis-emoji" x="${x.toFixed(1)}" dy="-3">${p.emoji}</tspan>
+      <tspan class="radar-axis-name" x="${x.toFixed(1)}" dy="12">${p.short}</tspan>
+    </text>`;
   }).join('');
   return `<div class="radar-wrap" style="--pc:${top.color}">
-    <svg class="radar" viewBox="0 0 240 240">
+    <svg class="radar" viewBox="0 0 260 260">
       ${grid}${spokes}
       <path class="radar-area" d="${areaPath}"></path>
       ${vertices}${labels}
@@ -464,8 +469,8 @@ function showRadarTip(el, label) {
   const wrap = el.closest('.radar-wrap');
   const tip = wrap.querySelector('.radar-tooltip');
   tip.textContent = label;
-  tip.style.left = (el.getAttribute('cx') / 240 * 100) + '%';
-  tip.style.top = (el.getAttribute('cy') / 240 * 100) + '%';
+  tip.style.left = (el.getAttribute('cx') / 260 * 100) + '%';
+  tip.style.top = (el.getAttribute('cy') / 260 * 100) + '%';
   tip.classList.add('show');
 }
 function hideRadarTip(el) {
