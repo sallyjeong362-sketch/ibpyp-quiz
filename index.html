@@ -184,6 +184,20 @@ h1 { font-weight: 800; font-size: clamp(24px, 5.2vw, 30px); letter-spacing: -0.0
 .score-bar { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
 .score-fill { height: 100%; border-radius: 2px; background: var(--pc); transition: width .5s ease; }
 
+.radar-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 1.3rem 1.2rem 1.1rem; margin-bottom: 1.6rem; opacity: 0; animation: rise .4s ease forwards; animation-delay: .25s; }
+.radar-wrap { position: relative; max-width: 300px; margin: 0 auto; }
+svg.radar { display: block; width: 100%; height: auto; overflow: visible; }
+.radar-grid { fill: none; stroke: var(--line); stroke-width: 1; }
+.radar-spoke { stroke: var(--line); stroke-width: 1; }
+.radar-area { fill: var(--pc); fill-opacity: .16; stroke: var(--pc); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.radar-vertex { fill: var(--pc); stroke: var(--surface); stroke-width: 2; }
+.radar-hit { fill: transparent; cursor: pointer; }
+.radar-hit:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.radar-emoji { font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+.radar-tooltip { position: absolute; pointer-events: none; left: 0; top: 0; transform: translate(-50%, calc(-100% - 10px)); background: var(--ink); color: var(--bg); font-size: 12px; font-weight: 600; padding: 0.4rem 0.6rem; border-radius: 8px; box-shadow: var(--shadow); opacity: 0; transition: opacity .12s; white-space: nowrap; z-index: 5; }
+.radar-tooltip.show { opacity: 1; }
+.radar-caption { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 0.5rem; }
+
 .result-actions { display: flex; gap: 9px; }
 .result-actions button { flex: 1; padding: 0.85rem; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; transition: filter .15s, border-color .15s; }
 .share-result-btn { background: transparent; border: 1.5px solid var(--line); color: var(--ink-soft); }
@@ -393,11 +407,69 @@ function renderResult() {
     <div class="top-result" style="--pc:${top.color}"><div class="desc-text">${top.desc}</div></div>
     <div class="scores-title">학습자상 순위</div>
     <div class="scores-list">${scoreRows}</div>
+    <div class="scores-title">10각형 밸런스 차트</div>
+    <div class="radar-card">
+      ${buildRadar(top, maxScore)}
+      <p class="radar-caption">점수가 높을수록 바깥쪽으로 뻗어나가요 · 각 꼭짓점을 눌러보세요</p>
+    </div>
     <div class="result-actions">
       <button class="share-result-btn" onclick="shareLink()">🔗 링크 공유</button>
       <button class="restart-btn" onclick="restart()">↺ 다시 하기</button>
     </div>
     <footer class="hint">이 링크를 그대로 보내면 누구든 바로 진단을 시작할 수 있어요.</footer>`;
+}
+function buildRadar(top, maxScore) {
+  const cx = 120, cy = 120, maxR = 82, n = profiles.length;
+  const angleFor = i => (360 / n) * i;
+  const pointAt = (angleDeg, r) => {
+    const rad = (angleDeg - 90) * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  };
+  const ringPath = r => profiles.map((_, i) => {
+    const [x, y] = pointAt(angleFor(i), r);
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(' ') + ' Z';
+  const grid = [0.33, 0.66, 1].map(f => `<path class="radar-grid" d="${ringPath(maxR * f)}"></path>`).join('');
+  const spokes = profiles.map((_, i) => {
+    const [x, y] = pointAt(angleFor(i), maxR);
+    return `<line class="radar-spoke" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"></line>`;
+  }).join('');
+  const dataR = profiles.map(p => maxR * (Math.max(0, scores[p.id]) / maxScore));
+  const areaPath = profiles.map((_, i) => {
+    const [x, y] = pointAt(angleFor(i), dataR[i]);
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(' ') + ' Z';
+  const vertices = profiles.map((p, i) => {
+    const [x, y] = pointAt(angleFor(i), dataR[i]);
+    const label = `${p.name} ${scores[p.id]}점`;
+    return `<circle class="radar-vertex" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"></circle>
+      <circle class="radar-hit" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="13" tabindex="0" role="img" aria-label="${label}"
+        onpointerenter="showRadarTip(this,'${label.replace(/'/g, "\\'")}')" onpointerleave="hideRadarTip(this)"
+        onfocus="showRadarTip(this,'${label.replace(/'/g, "\\'")}')" onblur="hideRadarTip(this)"></circle>`;
+  }).join('');
+  const labels = profiles.map((p, i) => {
+    const [x, y] = pointAt(angleFor(i), maxR + 18);
+    return `<text class="radar-emoji" x="${x.toFixed(1)}" y="${y.toFixed(1)}">${p.emoji}</text>`;
+  }).join('');
+  return `<div class="radar-wrap" style="--pc:${top.color}">
+    <svg class="radar" viewBox="0 0 240 240">
+      ${grid}${spokes}
+      <path class="radar-area" d="${areaPath}"></path>
+      ${vertices}${labels}
+    </svg>
+    <div class="radar-tooltip" id="radarTip"></div>
+  </div>`;
+}
+function showRadarTip(el, label) {
+  const wrap = el.closest('.radar-wrap');
+  const tip = wrap.querySelector('.radar-tooltip');
+  tip.textContent = label;
+  tip.style.left = (el.getAttribute('cx') / 240 * 100) + '%';
+  tip.style.top = (el.getAttribute('cy') / 240 * 100) + '%';
+  tip.classList.add('show');
+}
+function hideRadarTip(el) {
+  el.closest('.radar-wrap').querySelector('.radar-tooltip').classList.remove('show');
 }
 function restart() {
   current = 0; answers = new Array(questions.length).fill(null); scores = {};
