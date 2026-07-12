@@ -207,6 +207,10 @@ svg.radar { display: block; width: 100%; height: auto; overflow: visible; }
 .restart-btn { background: var(--ink); color: var(--bg); border: none; }
 .restart-btn:hover { filter: brightness(1.15); }
 
+.print-btn { width: 100%; margin-top: 9px; padding: 0.8rem; background: transparent; border: 1.5px dashed var(--line); border-radius: var(--radius-md); font-size: 13.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: border-color .15s, color .15s; }
+.print-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+.print-footer { display: none; }
+
 /* ---------- Toast ---------- */
 .toast { position: fixed; left: 50%; bottom: 1.6rem; transform: translateX(-50%) translateY(12px); background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 600; padding: 0.7rem 1.1rem; border-radius: 999px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -216,6 +220,25 @@ footer.hint { text-align: center; font-size: 12px; color: var(--ink-faint); marg
 @media (max-width: 380px) {
   .top-name { font-size: 23px; }
   .question-text { font-size: 16.5px; }
+}
+
+/* ---------- Print / PDF ---------- */
+@media print {
+  @page { margin: 14mm; }
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    --bg: #ffffff !important; --surface: #ffffff !important; --surface-2: #F1F4EF !important;
+    --ink: #16241F !important; --ink-soft: #55665D !important; --ink-faint: #8A9790 !important;
+    --line: #DEE6DA !important; --shadow: none !important;
+  }
+  * { animation: none !important; transition: none !important; box-shadow: none !important; }
+  body { padding: 0; background: #fff; }
+  .app { max-width: 100%; }
+  .share-btn, .toast, .trail, .q-tag, .question-card, .nav,
+  .intro-card, .result-actions, .print-btn, footer.hint { display: none !important; }
+  .rosette::before { animation: none !important; }
+  .question-card, .result-header, .radar-card, .score-row { opacity: 1 !important; transform: none !important; }
+  .top-result, .radar-card, .score-row { break-inside: avoid; }
+  .print-footer { display: block; text-align: center; font-size: 10.5px; color: var(--ink-faint); margin-top: 1.2rem; }
 }
 </style>
 </head>
@@ -418,7 +441,9 @@ function renderResult() {
       <button class="share-result-btn" onclick="shareLink()">🔗 링크 공유</button>
       <button class="restart-btn" onclick="restart()">↺ 다시 하기</button>
     </div>
-    <footer class="hint">이 링크를 그대로 보내면 누구든 바로 진단을 시작할 수 있어요.</footer>`;
+    <button class="print-btn" onclick="window.print()">🖨️ 인쇄 · PDF로 저장</button>
+    <footer class="hint">이 링크를 그대로 보내면 누구든 바로 진단을 시작할 수 있어요.</footer>
+    <p class="print-footer">IB PYP 학습자상 자가진단 · ${new Date().toLocaleDateString('ko-KR')} · ${location.href}</p>`;
 }
 function buildRadar(top, maxScore) {
   const cx = 130, cy = 130, maxR = 78, n = profiles.length;
