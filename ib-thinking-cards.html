@@ -1,0 +1,1058 @@
+<meta charset="UTF-8">
+<title>탐구 카드 · IB 학습자상 질문 게임</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+  --paper: #EFE9D8; --paper-2: #E6DFC5; --paper-3: #DCD4B6;
+  --ink: #22281F; --ink-soft: #565A47; --ink-faint: #8B8468;
+  --line: #CBC0A0; --line-strong: #B3A67E;
+  --brass: #A9782F; --brass-strong: #7C561F; --brass-tint: #E4D2A6;
+  --moss: #3F6E52; --moss-tint: #D8E3D2;
+  --stamp: #B24A2E; --stamp-tint: #EFD6C8;
+  --shadow: 0 1px 2px rgba(34,40,31,.08), 0 10px 26px rgba(34,40,31,.10);
+  --radius: 5px; --radius-sm: 3px;
+  --serif: Iowan Old Style, Palatino Linotype, Palatino, "Noto Serif KR", Georgia, ui-serif, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", Pretendard, system-ui, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1A1E15; --paper-2: #20241A; --paper-3: #262B1E;
+    --ink: #EDE7D1; --ink-soft: #B9B092; --ink-faint: #786F52;
+    --line: #3A4030; --line-strong: #4C5339;
+    --brass: #D7A24A; --brass-strong: #F0BE72; --brass-tint: #3C331C;
+    --moss: #7AB08B; --moss-tint: #223226;
+    --stamp: #E38A5F; --stamp-tint: #3B2620;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1A1E15; --paper-2: #20241A; --paper-3: #262B1E;
+  --ink: #EDE7D1; --ink-soft: #B9B092; --ink-faint: #786F52;
+  --line: #3A4030; --line-strong: #4C5339;
+  --brass: #D7A24A; --brass-strong: #F0BE72; --brass-tint: #3C331C;
+  --moss: #7AB08B; --moss-tint: #223226;
+  --stamp: #E38A5F; --stamp-tint: #3B2620;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px rgba(0,0,0,.4);
+}
+:root[data-theme="light"] {
+  --paper: #EFE9D8; --paper-2: #E6DFC5; --paper-3: #DCD4B6;
+  --ink: #22281F; --ink-soft: #565A47; --ink-faint: #8B8468;
+  --line: #CBC0A0; --line-strong: #B3A67E;
+  --brass: #A9782F; --brass-strong: #7C561F; --brass-tint: #E4D2A6;
+  --moss: #3F6E52; --moss-tint: #D8E3D2;
+  --stamp: #B24A2E; --stamp-tint: #EFD6C8;
+  --shadow: 0 1px 2px rgba(34,40,31,.08), 0 10px 26px rgba(34,40,31,.10);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; padding: 0; }
+body {
+  background:
+    repeating-linear-gradient(var(--paper) 0 27px, var(--line) 27px 28px)
+    , var(--paper);
+  background-attachment: local;
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+:focus-visible { outline: 2.5px solid var(--stamp); outline-offset: 2px; border-radius: 3px; }
+a { color: inherit; }
+
+.page { max-width: 520px; margin: 0 auto; padding: 2.2rem 1.15rem 3.5rem; }
+
+.masthead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.6rem; padding-bottom: .9rem; border-bottom: 1.5px solid var(--line-strong); }
+.mast-title { font-family: var(--serif); font-weight: 600; font-size: 20px; letter-spacing: .01em; }
+.mast-tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; color: var(--ink-faint); text-transform: uppercase; }
+.profile-chip { display: inline-flex; align-items: center; gap: .35rem; background: var(--paper-3); border: 1px solid var(--line); border-radius: 999px; padding: .3rem .65rem; font-size: 11.5px; font-weight: 700; color: var(--ink-soft); cursor: pointer; font-family: var(--sans); }
+.profile-chip:hover { border-color: var(--brass); color: var(--brass-strong); }
+
+/* ---- local profiles (no account, no external login) ---- */
+.user-grid { display: flex; flex-wrap: wrap; gap: .8rem; margin: 1rem 0 1.3rem; }
+.user-card { position: relative; }
+.user-card-main { display: flex; flex-direction: column; align-items: center; gap: .35rem; width: 80px; padding: .8rem .4rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); cursor: pointer; font-family: var(--sans); }
+.user-card-main:hover { border-color: var(--brass); }
+.user-avatar { font-size: 27px; }
+.user-name { font-size: 11.5px; font-weight: 700; text-align: center; line-height: 1.25; }
+.user-del { position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; border-radius: 50%; background: var(--stamp); color: #fff; border: 2px solid var(--paper-2); font-size: 10px; line-height: 1; cursor: pointer; }
+.avatar-grid { display: flex; flex-wrap: wrap; gap: .45rem; margin: .6rem 0 0; }
+.avatar-btn { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--line-strong); background: var(--paper); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.avatar-btn.selected { border-color: var(--stamp); background: var(--stamp-tint); }
+.user-note { font-size: 12px; color: var(--ink-faint); line-height: 1.6; margin: .6rem 0 0; }
+
+.sheet { background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.7rem 1.4rem; margin-bottom: 1.1rem; position: relative; animation: settle .4s cubic-bezier(.2,.8,.2,1); }
+@keyframes settle { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.tape { position: absolute; top: -12px; left: 28px; width: 74px; height: 24px; background: var(--brass); opacity: .82; transform: rotate(-3deg); box-shadow: 0 2px 5px rgba(0,0,0,.18); }
+
+.eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: var(--brass-strong); text-transform: uppercase; margin: 0 0 .5rem; }
+h1.title { font-family: var(--serif); font-weight: 600; font-size: 24px; line-height: 1.28; text-wrap: balance; margin: 0 0 .6rem; }
+h2.title { font-family: var(--serif); font-weight: 600; font-size: 19px; line-height: 1.32; text-wrap: balance; margin: 0 0 .6rem; }
+.lede { font-size: 14px; color: var(--ink-soft); line-height: 1.7; max-width: 62ch; margin: 0 0 1.1rem; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; width: 100%; padding: .85rem 1rem; border: none; border-radius: var(--radius-sm); background: var(--ink); color: var(--paper); font-family: var(--sans); font-size: 14.5px; font-weight: 700; cursor: pointer; transition: filter .15s, transform .1s; }
+.btn:hover { filter: brightness(1.14); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn.accent { background: var(--stamp); color: #fff; }
+.btn.ghost { background: transparent; color: var(--ink-soft); border: 1.5px solid var(--line-strong); }
+.btn.ghost:hover { border-color: var(--brass); color: var(--brass-strong); }
+.btn.small { width: auto; padding: .6rem 1rem; font-size: 13px; }
+.row { display: flex; gap: .6rem; }
+
+/* ---- profile badges ---- */
+.badge-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.1rem .9rem; margin: 1.2rem 0 .5rem; }
+.badge { display: flex; flex-direction: column; align-items: center; gap: .4rem; width: 80px; background: none; border: none; cursor: pointer; padding: 0; font-family: var(--sans); }
+.badge-ring { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--paper-3); border: 2.5px solid var(--line-strong); transition: border-color .15s, background .15s, transform .15s; position: relative; }
+.badge.checked .badge-ring { border-color: var(--bc); background: color-mix(in srgb, var(--bc) 18%, var(--paper-2)); transform: scale(1.05); }
+.badge.checked .badge-ring::after { content: '✓'; position: absolute; right: -3px; bottom: -3px; width: 19px; height: 19px; border-radius: 50%; background: var(--bc); color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid var(--paper-2); }
+.badge.disabled { opacity: .32; cursor: not-allowed; }
+.badge-name { font-size: 11.5px; font-weight: 700; text-align: center; line-height: 1.25; }
+.badge-medal { position: absolute; top: -6px; right: -6px; font-size: 15px; filter: drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
+.select-note { text-align: center; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin: .3rem 0 1.2rem; }
+
+/* ---- stamp rows (visible per-card progress) ---- */
+.stamp-row { display: flex; gap: 3px; justify-content: center; }
+.stamp-box { width: 11px; height: 11px; border-radius: 3px; border: 1.5px solid var(--line-strong); background: var(--paper); }
+.stamp-box.filled { background: var(--tc); border-color: var(--tc); }
+
+/* ---- daily pacing strip ---- */
+.daily-strip { display: flex; align-items: center; justify-content: space-between; gap: .6rem; font-size: 12px; color: var(--ink-soft); background: var(--paper-3); border-radius: var(--radius-sm); padding: .55rem .75rem; margin-bottom: 1rem; }
+.daily-remain { font-family: var(--mono); font-weight: 700; color: var(--brass-strong); }
+
+/* ---- illustrated journey map ---- */
+.map-scene { position: relative; width: 100%; aspect-ratio: 320 / 1560; border-radius: var(--radius); overflow: hidden; background: var(--paper-3); border: 1px solid var(--line); }
+.map-scene svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -50%); width: 92px; }
+.map-pin-dot { width: 42px; height: 42px; border-radius: 50%; background: var(--tc); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 19px; box-shadow: 0 0 0 4px var(--paper-3), 0 3px 8px rgba(0,0,0,.18); position: relative; z-index: 2; }
+.map-pin.muted .map-pin-dot { background: var(--paper); color: var(--ink-faint); filter: grayscale(1); opacity: .7; box-shadow: 0 0 0 4px var(--paper-3), 0 2px 5px rgba(0,0,0,.1); }
+.map-pin.complete .map-pin-dot { box-shadow: 0 0 0 4px var(--paper-3), 0 0 0 7px color-mix(in srgb, var(--stamp) 55%, transparent), 0 3px 10px rgba(0,0,0,.2); }
+.map-pin-flag { position: absolute; top: -9px; right: -4px; font-size: 15px; z-index: 3; filter: drop-shadow(0 1px 1px rgba(0,0,0,.3)); }
+.map-pin-card { margin-top: .35rem; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .35rem .5rem; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+.map-pin-name { font-size: 11px; font-weight: 700; line-height: 1.25; }
+.map-pin-title { font-family: var(--mono); font-size: 9px; color: var(--ink-faint); margin: .1rem 0 .3rem; }
+.map-legend { display: flex; gap: 1rem; justify-content: center; font-size: 11px; color: var(--ink-faint); margin-top: .7rem; }
+.map-legend span { display: inline-flex; align-items: center; gap: .3rem; }
+
+/* ---- badge-earned celebration ---- */
+.badge-sheet { text-align: center; }
+.badge-medal-big { width: 88px; height: 88px; margin: .2rem auto 1rem; border-radius: 50%; background: var(--tc); display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 8px 22px color-mix(in srgb, var(--tc) 45%, transparent); animation: pop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.badge-earned-kicker { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--brass-strong); text-transform: uppercase; }
+.badge-earned-title { font-family: var(--serif); font-size: 26px; font-weight: 800; margin: .2rem 0 .8rem; }
+
+/* ---- quiz ---- */
+.trail { display: flex; align-items: center; gap: 4px; margin-bottom: 1rem; }
+.trail-tick { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); flex: none; }
+.trail-tick.done { background: var(--stamp); }
+.trail-bar { flex: 1; height: 1.5px; background: var(--line-strong); }
+.trail-bar.done { background: var(--stamp); }
+.q-num { font-family: var(--mono); font-size: 11px; color: var(--brass-strong); letter-spacing: .06em; margin-bottom: .3rem; }
+.q-text { font-family: var(--serif); font-size: 19px; line-height: 1.42; margin: 0 0 1.1rem; text-wrap: balance; }
+.opt-list { display: flex; flex-direction: column; gap: .55rem; }
+.opt { display: flex; align-items: center; gap: .7rem; text-align: left; padding: .8rem .95rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); cursor: pointer; font-size: 13.8px; color: var(--ink); transition: border-color .15s, background .15s; }
+.opt .dot { flex: none; width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--line-strong); }
+.opt.sel { border-color: var(--stamp); background: var(--stamp-tint); }
+.opt.sel .dot { background: var(--stamp); border-color: var(--stamp); }
+.nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 1.2rem; }
+.nav-count { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+
+/* ---- result ---- */
+.result-top { text-align: center; padding: .3rem 0 1.2rem; }
+.seal { width: 74px; height: 74px; margin: 0 auto .8rem; border-radius: 50%; background: var(--rc); display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 6px 18px color-mix(in srgb, var(--rc) 45%, transparent); }
+.result-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--ink-faint); text-transform: uppercase; }
+.result-name { font-family: var(--serif); font-size: 25px; font-weight: 700; margin: .2rem 0 .1rem; }
+.result-en { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+.result-desc { font-size: 14px; line-height: 1.7; color: var(--ink-soft); text-align: center; max-width: 46ch; margin: .9rem auto 0; }
+
+.rank-row { display: grid; grid-template-columns: 20px 26px 1fr auto; align-items: center; gap: .55rem; padding: .5rem 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.rank-row:last-child { border-bottom: none; }
+.rank-num { font-family: var(--mono); color: var(--ink-faint); font-size: 11px; }
+.rank-name { font-weight: 600; }
+.rank-bar-wrap { grid-column: 1 / -1; height: 4px; background: var(--paper-3); border-radius: 2px; overflow: hidden; margin-top: -.3rem; margin-bottom: .35rem; }
+.rank-bar { height: 100%; background: var(--rc2); }
+.rank-score { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+
+.compass-svg-wrap { display: flex; justify-content: center; margin: .4rem 0; }
+
+.cta-sheet { background: var(--paper-3); border: 1.5px dashed var(--brass); border-radius: var(--radius); padding: 1.2rem 1.1rem; text-align: center; margin-top: 1rem; }
+.cta-eyebrow { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: var(--brass-strong); text-transform: uppercase; margin-bottom: .4rem; }
+.cta-text { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 0 0 .9rem; }
+.cta-text b { color: var(--ink); }
+
+/* ---- guided questions: the app asks, the child answers ---- */
+.qa-block { margin: 0 0 1.1rem; }
+.ask { display: flex; gap: .6rem; align-items: flex-start; margin-bottom: .5rem; }
+.ask-badge { flex: none; width: 25px; height: 25px; border-radius: 50%; background: var(--brass); color: #fff; font-family: var(--mono); font-size: 10.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: .1rem; }
+.ask-text { font-family: var(--serif); font-size: 16px; line-height: 1.5; color: var(--ink); text-wrap: balance; }
+
+.field { width: 100%; margin-top: .5rem; padding: .75rem .85rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); font-size: 13.8px; font-family: var(--sans); resize: vertical; min-height: 58px; }
+.field:focus { border-color: var(--stamp); }
+
+/* ---- write-your-own situation + do-it-online tools ---- */
+.context-toggle { display: flex; gap: .4rem; margin: .5rem 0 .6rem; }
+.toggle-btn { flex: 1; padding: .5rem .3rem; border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--paper); font-family: var(--sans); font-size: 11.5px; font-weight: 700; color: var(--ink-soft); cursor: pointer; }
+.toggle-btn.active { border-color: var(--stamp); background: var(--stamp-tint); color: var(--ink); }
+.tool-bar { display: flex; flex-direction: column; gap: .55rem; background: var(--paper-3); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .7rem .75rem; margin: 0 0 1.1rem; }
+.tool-bar-label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--ink-faint); text-transform: uppercase; }
+.tool-row { display: flex; gap: .5rem; align-items: center; }
+.tool-row .field { margin-top: 0; flex: 1; min-height: auto; padding: .5rem .6rem; font-size: 12.5px; }
+.tool-link, .timer-btn2 { display: inline-flex; align-items: center; gap: .3rem; padding: .5rem .7rem; border-radius: var(--radius-sm); border: 1.5px solid var(--line-strong); background: var(--paper); color: var(--ink-soft); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; cursor: pointer; font-family: var(--sans); }
+.tool-link:hover, .timer-btn2:hover { border-color: var(--brass); color: var(--brass-strong); }
+.timer-display { font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--ink); min-width: 3.6em; text-align: center; }
+.mission-check { display: flex; align-items: center; gap: .45rem; font-size: 12.5px; color: var(--ink-soft); margin-top: .6rem; cursor: pointer; }
+.mission-check input { accent-color: var(--stamp); width: 16px; height: 16px; }
+.video-link { display: inline-flex; align-items: center; gap: .35rem; margin-top: .55rem; font-size: 12.5px; font-weight: 700; color: var(--brass-strong); text-decoration: none; border-bottom: 1.5px dashed var(--brass); padding-bottom: 1px; }
+.video-link:hover { color: var(--stamp); border-color: var(--stamp); }
+.card-tag-row { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; }
+.tag { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: .3rem .6rem; border-radius: 999px; }
+.tag.trait { color: #fff; background: var(--tc); }
+.tag.atl { color: var(--ink-soft); background: var(--paper-3); border: 1px solid var(--line); }
+.card-no { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-left: auto; }
+.section-label { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .07em; color: var(--ink-faint); text-transform: uppercase; margin: 1.15rem 0 .4rem; }
+.section-label:first-of-type { margin-top: 0; }
+.body-text { font-size: 14.3px; line-height: 1.7; margin: 0; }
+.mission-text { font-size: 13.5px; line-height: 1.65; color: var(--ink-soft); margin: 0; }
+
+.summary-row { display: flex; align-items: center; gap: .75rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.summary-row:last-child { border-bottom: none; }
+.summary-badge { width: 42px; height: 42px; border-radius: 50%; background: var(--tc); display: flex; align-items: center; justify-content: center; font-size: 19px; flex: none; }
+.summary-body { flex: 1; }
+.summary-name { font-weight: 700; font-size: 13.8px; }
+.summary-lvl { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.summary-bar-wrap { height: 4px; background: var(--paper-3); border-radius: 2px; overflow: hidden; margin-top: .3rem; }
+.summary-bar { height: 100%; background: var(--tc); }
+.summary-done { font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--moss); }
+
+.foot-note { text-align: center; font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 1.6rem; letter-spacing: .03em; }
+</style>
+
+<div class="page">
+  <div class="masthead">
+    <span class="mast-title">탐구 수첩</span>
+    <span class="mast-tag" id="mastRight">IB PYP Field Notes</span>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+const PROFILES = [
+  { id: "inquirer", name: "탐구하는 사람", short: "탐구", emoji: "🔍", en: "Inquirer", color: "#185FA5",
+    desc: "호기심을 키우고 탐구와 연구 기술을 발전시켜요. 스스로 배우는 것을 좋아하고 평생 학습에 대한 열정을 가져요." },
+  { id: "knowledgeable", name: "지식이 풍부한 사람", short: "지식", emoji: "📚", en: "Knowledgeable", color: "#0F6E56",
+    desc: "중요한 개념을 깊이 탐구하고 다양한 분야에 걸쳐 넓은 지식을 쌓아요." },
+  { id: "thinker", name: "생각하는 사람", short: "생각", emoji: "💡", en: "Thinker", color: "#534AB7",
+    desc: "복잡한 문제를 비판적·창의적으로 분석하고 책임감 있는 행동을 이끌어 내요." },
+  { id: "communicator", name: "소통하는 사람", short: "소통", emoji: "💬", en: "Communicator", color: "#BA7517",
+    desc: "여러 언어와 다양한 방식으로 자신감 있게 생각과 정보를 표현하고 협력해요." },
+  { id: "principled", name: "원칙이 있는 사람", short: "원칙", emoji: "⚖️", en: "Principled", color: "#3C3489",
+    desc: "정직하고 강한 도덕적 신념으로 행동하며 자신의 행동에 책임을 져요." },
+  { id: "open-minded", name: "열린 마음의 사람", short: "열린마음", emoji: "🌍", en: "Open-minded", color: "#993C1D",
+    desc: "다른 사람의 관점, 가치, 전통을 이해하고 다양한 경험을 찾아 나서요." },
+  { id: "caring", name: "배려하는 사람", short: "배려", emoji: "❤️", en: "Caring", color: "#993556",
+    desc: "공감과 존중을 보여주고 다른 사람과 주변 세계에 긍정적 변화를 만들어요." },
+  { id: "risk-taker", name: "도전하는 사람", short: "도전", emoji: "🚀", en: "Risk-taker", color: "#3B6D11",
+    desc: "불확실한 상황에도 자신감과 창의성을 발휘하며 새로운 것에 도전해요." },
+  { id: "balanced", name: "균형 잡힌 사람", short: "균형", emoji: "☯️", en: "Balanced", color: "#0C447C",
+    desc: "자신과 타인의 몸·마음·감정적 균형을 이해하여 전인적 행복을 추구해요." },
+  { id: "reflective", name: "성찰하는 사람", short: "성찰", emoji: "🪞", en: "Reflective", color: "#5F5E5A",
+    desc: "자신의 학습과 경험을 깊이 돌아보며 지속적인 성장을 추구해요." }
+];
+const PROFILE_MAP = Object.fromEntries(PROFILES.map(p => [p.id, p]));
+
+const CARDS = {
+  inquirer: [
+    { id:"inq1", title:"궁금증의 씨앗", atl:"조사 기술",
+      context:"오늘 궁금했던 것이 있었나요? 그중 하나를 떠올려보세요.",
+      q1:{ text:"그건 왜 궁금해졌나요?", options:["처음 보는 거라서", "이상하게 느껴져서", "더 알고 싶어서"] }, q2:"그 답을 알면 무엇이 달라질까요?",
+      mission:"책이나 인터넷에서 답을 찾아보고, 새로 안 것 1가지를 적어보세요.",
+      reflect:"오늘 가장 재미있었던 질문은 무엇이었나요?" },
+    { id:"inq2", title:"질문을 파고들기", atl:"사고 기술",
+      context:"'사람들은 왜 거짓말을 할까?' 생각해보세요.",
+      q1:{ text:"가장 먼저 떠오른 이유는 무엇인가요?", options:["들키기 싫어서", "남을 놀라게 하고 싶어서", "잘 모르겠어서"] }, q2:"그 이유는 또 무엇 때문에 생길까요? (예: 두려움, 습관 등)",
+      mission:"이유를 하나 더 찾아서, 처음 이유와 비교해보세요.",
+      reflect:"질문을 계속 하다 보니 처음 생각과 달라진 점이 있나요?" },
+    { id:"inq3", title:"만약에 질문", atl:"사고 기술",
+      context:"'만약 학교에 시험이 없다면 어떻게 될까?'처럼 재미있는 '만약에' 상황을 하나 떠올려보세요.",
+      q1:{ text:"그렇게 되면 무엇이 달라질까요?", options:["더 신날 것 같아요", "더 힘들어질 것 같아요", "잘 모르겠어요"] }, q2:"왜 그런 변화가 생길까요?",
+      mission:"나만의 '만약에' 질문을 2개 더 만들어보세요.",
+      reflect:"어떤 '만약에' 질문이 가장 오래 생각났나요?" },
+    { id:"inq4", title:"작은 탐구자", atl:"조사 기술",
+      context:"연필, 신호등, 우산처럼 흔한 물건 하나를 골라보세요.",
+      q1:{ text:"그건 어떻게 생겼나요? 왜 그런 모양일까요?", options:["쓰기 편하라고", "눈에 잘 띄라고", "그냥 그렇게 정해진 것 같아요"] }, q2:"그건 어떻게 쓰이나요? 누가 처음 만들었을까요?",
+      mission:"진짜 답을 찾아보고, 내 생각과 같은지 확인해보세요.",
+      reflect:"상상하면서 어떤 점이 재미있었나요?" }
+  ],
+  knowledgeable: [
+    { id:"kno1", title:"연결고리 찾기", atl:"사고 기술",
+      context:"오늘 배운 것 하나를 골라보세요.",
+      q1:{ text:"그것과 비슷한, 내가 이미 알고 있던 것은 무엇인가요?", options:["학교에서 배운 것", "책에서 본 것", "생활에서 본 것"] }, q2:"왜 두 가지가 비슷하다고 생각했나요?",
+      mission:"두 가지를 화살표로 이어서 그림으로 그려보세요.",
+      reflect:"연결해보니 새롭게 안 것이 있나요?" },
+    { id:"kno2", title:"내가 선생님", atl:"의사소통 기술",
+      context:"내가 제일 잘 아는 것 하나를 정해보세요.",
+      q1:{ text:"그건 무엇인가요? 어떻게 생겼거나 어떻게 쓰이나요?", options:["물건이에요", "이야기예요", "방법이에요"] }, q2:"친구에게 가르쳐준다면 어떤 순서로 설명할까요?",
+      mission:"진짜 누군가에게 설명해 보고, 어떤 질문을 받았는지 적어보세요.",
+      reflect:"설명하면서 잘 아는 부분과 헷갈리는 부분을 알 수 있었나요?" },
+    { id:"kno3", title:"다른 나라라면?", atl:"조사 기술",
+      context:"우리나라의 돈, 계절, 학교 중 하나를 골라보세요.",
+      q1:{ text:"다른 나라에서는 이게 어떻게 다를까요?", options:["완전히 다를 것 같아요", "조금 비슷할 것 같아요", "잘 모르겠어요"] }, q2:"그건 우리나라의 것과 무엇이 비슷하고 무엇이 다를까요?",
+      mission:"진짜로 찾아보고, 내 상상과 비교해보세요.",
+      reflect:"다른 나라를 알고 나니 우리나라에 대해 새롭게 안 것이 있나요?" },
+    { id:"kno4", title:"지식 카드 만들기", atl:"조사 기술",
+      context:"내가 잘 아는 것으로 재미있는 문제를 하나 만들어보세요.",
+      q1:{ text:"그 문제의 답은 무엇인가요?", options:["바로 생각났어요", "곰곰이 생각해야 했어요", "아직 잘 모르겠어요"] }, q2:"그 답이 다른 것과 어떻게 연결되나요?",
+      mission:"오늘 새로 배운 것 3가지를 적어보세요.",
+      reflect:"오늘 배운 것 중 가장 기억에 남는 것은 무엇인가요?" }
+  ],
+  thinker: [
+    { id:"thi1", title:"딜레마 생각하기", atl:"사고 기술",
+      context:"친구가 준비물을 안 가져와서 내 것을 빌려달라고 해요. 그런데 나도 딱 하나뿐이에요.",
+      q1:{ text:"내가 빌려주면 어떤 일이 생길까요?", options:["친구가 고마워할 거예요", "나도 곤란해질 수 있어요", "별일 없을 거예요"] }, q2:"안 빌려주면 어떤 일이 생길까요?",
+      mission:"두 생각을 합쳐서 좋은 방법 하나를 만들어보세요.",
+      reflect:"각 생각에서 아쉬운 점은 무엇이었나요?" },
+    { id:"thi2", title:"거꾸로 생각하기", atl:"사고 기술",
+      context:"'쉬는 시간이 길수록 좋다'는 생각을 떠올려보세요.",
+      q1:{ text:"왜 그렇게 생각하나요?", options:["더 많이 놀 수 있어서", "더 편하게 쉴 수 있어서", "공부할 시간이 줄어서 걱정돼서"] }, q2:"반대로, 쉬는 시간이 짧으면 좋은 점은 무엇일까요?",
+      mission:"반대로 생각해보니 원래 내 생각이 바뀌었는지 적어보세요.",
+      reflect:"믿지 않던 생각을 적어보니 기분이 어땠나요?" },
+    { id:"thi3", title:"문제의 뿌리", atl:"사고 기술",
+      context:"우리 반에서 자주 생기는 작은 문제 하나를 골라보세요.",
+      q1:{ text:"그 문제는 왜 생길까요?", options:["규칙을 몰라서", "깜빡해서", "일부러 그러는 것 같아요"] }, q2:"그 원인을 없애려면 누가 무엇을 해야 할까요?",
+      mission:"그 문제를 해결할 좋은 방법을 2가지 이상 적어보세요.",
+      reflect:"원인을 찾아보니 처음 생각과 달랐던 점이 있나요?" },
+    { id:"thi4", title:"창의적 다른 용도", atl:"사고 기술",
+      context:"클립이나 종이컵처럼 흔한 물건 하나를 골라보세요.",
+      q1:{ text:"원래 쓰임 말고 다르게 쓸 수 있는 방법은 무엇일까요?", options:["장난감으로", "다른 물건 대신으로", "잘 모르겠어요"] }, q2:"그 물건이 다른 모양이었다면 또 어떻게 쓸 수 있을까요?",
+      mission:"가장 재미있는 아이디어 하나를 실제로 해보세요.",
+      reflect:"어떤 아이디어가 가장 놀라웠나요?" }
+  ],
+  communicator: [
+    { id:"com1", title:"1분 스피치", atl:"의사소통 기술",
+      context:"내가 좋아하는 것 하나를 떠올려보세요.",
+      q1:{ text:"그걸 모르는 사람에게 어떻게 설명할까요?", options:["쉬운 말로 천천히", "그림을 그리며", "예를 들어가며"] }, q2:"듣는 사람이 무엇을 궁금해할까요?",
+      mission:"실제로 누군가에게 말해보고, 잘 전달됐는지 적어보세요.",
+      reflect:"이야기를 잘 전달하려고 어떤 방법을 썼나요?" },
+    { id:"com2", title:"몸으로 말해요", atl:"의사소통 기술",
+      context:"기쁨, 화남, 놀람 중 감정 하나를 골라보세요.",
+      q1:{ text:"말 없이 표정과 몸짓으로 어떻게 표현할까요?", options:["표정으로", "손짓으로", "몸 전체로"] }, q2:"상대가 못 알아채면 어떻게 다르게 표현해볼까요?",
+      mission:"실제로 해보고 다른 사람이 잘 알아챘는지 확인해보세요.",
+      reflect:"말 없이 마음을 전할 때 어려운 점은 무엇이었나요?" },
+    { id:"com3", title:"경청 챌린지", atl:"의사소통 기술",
+      context:"누군가 최근에 있었던 일을 나에게 이야기해준다고 상상해보세요.",
+      q1:{ text:"끝까지 끼어들지 않고 들으면 무엇이 다를까요?", options:["더 잘 이해될 것 같아요", "더 참기 힘들 것 같아요", "잘 모르겠어요"] }, q2:"듣고 나서 어떤 말을 해주면 좋을까요?",
+      mission:"실제로 들어보고, 기억에 남는 부분을 한 문장으로 적어보세요.",
+      reflect:"끼어들고 싶은 마음을 참는 게 쉬웠나요, 어려웠나요?" },
+    { id:"com4", title:"설득의 기술", atl:"의사소통 기술",
+      context:"오늘 저녁 메뉴를 내가 원하는 것으로 정하고 싶어요.",
+      q1:{ text:"왜 그 메뉴가 좋은가요? 이유를 적어보세요.", options:["맛있어서", "오랜만이라서", "건강에 좋아서"] }, q2:"그 이유를 들으면 다른 사람은 어떻게 생각할까요?",
+      mission:"실제로 누군가를 설득해보고, 어떤 이유가 가장 잘 통했는지 적어보세요.",
+      reflect:"어떤 이유가 가장 힘이 셌나요?" }
+  ],
+  principled: [
+    { id:"pri1", title:"솔직함의 딜레마", atl:"사회적 기술",
+      context:"친구가 새 머리 모양이 어떠냐고 물어봐요. 사실 나는 별로라고 생각해요.",
+      q1:{ text:"솔직하게 말하면 친구는 어떤 기분일까요?", options:["속상할 것 같아요", "고마워할 것 같아요", "잘 모르겠어요"] }, q2:"나라면 무슨 말을 할까요? 왜 그렇게 말할까요?",
+      mission:"솔직하면서도 친구 마음이 안 상하는 대답을 만들어보세요.",
+      reflect:"솔직함과 배려가 부딪힐 때 나는 어떤 걸 더 중요하게 생각하나요?" },
+    { id:"pri2", title:"규칙은 왜 있을까", atl:"사고 기술",
+      context:"우리 반 규칙 하나를 골라보세요.",
+      q1:{ text:"그 규칙이 없으면 어떤 일이 생길까요?", options:["다투는 일이 생길 것 같아요", "불공평해질 것 같아요", "별일 없을 것 같아요"] }, q2:"그 규칙을 지키면 나와 친구들은 무엇이 좋아질까요?",
+      mission:"그 규칙을 더 좋게 바꿀 방법이 있다면 적어보세요.",
+      reflect:"규칙을 지키는 것과 이유를 아는 것, 어떤 게 더 중요할까요?" },
+    { id:"pri3", title:"들켰을 때", atl:"자기관리 기술",
+      context:"실수로 규칙을 어겼는데 아무도 못 봤어요.",
+      q1:{ text:"나는 어떻게 할까요?", options:["솔직하게 말할 거예요", "그냥 넘어갈 거예요", "고민될 것 같아요"] }, q2:"만약 들켰다면 마음이 어떻게 달라질까요?",
+      mission:"실수했을 때 지킬 나만의 약속 한 문장을 적어보세요.",
+      reflect:"잘못을 인정하는 게 왜 어려울까요?" },
+    { id:"pri4", title:"공정한 심판", atl:"사회적 기술",
+      context:"게임 중 친한 친구가 규칙을 살짝 어겼어요.",
+      q1:{ text:"내가 심판이라면 어떻게 할까요?", options:["규칙대로 할 거예요", "한 번은 봐줄 거예요", "고민될 것 같아요"] }, q2:"친구가 아니라 모르는 사람이었다면 똑같이 했을까요?",
+      mission:"친구도 지키고 규칙도 지키는 방법이 있다면 적어보세요.",
+      reflect:"공정하게 하는 것이 왜 중요할까요?" }
+  ],
+  "open-minded": [
+    { id:"opn1", title:"낯선 음식 이야기", atl:"조사 기술",
+      context:"한 번도 안 먹어본 다른 나라 음식 하나를 떠올려보세요.",
+      q1:{ text:"그건 어떻게 생겼을까요? 무슨 맛일 것 같나요?", options:["맛있을 것 같아요", "낯설 것 같아요", "상상이 안 돼요"] }, q2:"그 음식을 매일 먹는 사람은 어떤 기분일까요?",
+      mission:"진짜로 찾아보고 새로 안 것을 적어보세요.",
+      reflect:"낯선 것을 상상해보니 어떤 느낌이었나요?" },
+    { id:"opn2", title:"입장 바꿔 생각하기", atl:"사회적 기술",
+      context:"나와 생각이 달랐던 친구를 떠올려보세요.",
+      q1:{ text:"그 친구는 왜 그렇게 생각했을까요?", options:["경험이 달라서", "좋아하는 게 달라서", "잘 모르겠어요"] }, q2:"그 친구 입장이 되어보면 이해되는 부분이 있나요?",
+      mission:"그 친구 입장에서 짧은 글을 써보세요.",
+      reflect:"다른 사람 입장에서 말하는 게 쉬웠나요, 어려웠나요?" },
+    { id:"opn3", title:"전통 vs 새로움", atl:"사고 기술",
+      context:"옛날 방식과 새로운 방식 중 하나를 정해보세요.",
+      q1:{ text:"옛날 방식은 왜 좋을까요?", options:["전통이라서", "익숙해서", "의미가 있어서"] }, q2:"새로운 방식은 어떻게 다르고, 왜 좋을까요?",
+      mission:"둘 다 존중하는 방법을 하나 생각해보세요.",
+      reflect:"나와 다른 생각을 가진 사람과 이야기할 때 나는 어떻게 반응하나요?" },
+    { id:"opn4", title:"편견 찾기", atl:"사고 기술",
+      context:"'남자는 ~해야 한다', '여자는 ~해야 한다'처럼 우리도 모르게 갖고 있던 생각을 하나 떠올려보세요.",
+      q1:{ text:"그 생각은 어디서 왔을까요?", options:["어른들 말에서", "텔레비전이나 책에서", "그냥 그런 줄 알았어요"] }, q2:"그 생각이 사실이 아니라는 걸 어떻게 알 수 있을까요?",
+      mission:"그 생각이 사실이 아닌 이유를 적어보세요.",
+      reflect:"내 생각 속 편견을 발견했을 때 기분이 어땠나요?" }
+  ],
+  caring: [
+    { id:"car1", title:"오늘의 도움", atl:"사회적 기술",
+      context:"오늘 도움이 필요해 보이는 사람을 봤나요?",
+      q1:{ text:"그 사람은 왜 도움이 필요해 보였나요?", options:["힘들어 보여서", "혼자여서", "무거운 걸 들고 있어서"] }, q2:"나는 무엇을 해줄 수 있었을까요?",
+      mission:"내일 작은 도움을 실제로 한 가지 해보고 적어보세요.",
+      reflect:"도움을 주고받을 때 어떤 마음이 들었나요?" },
+    { id:"car2", title:"마음 읽기", atl:"사회적 기술",
+      context:"친구가 속상한 일을 이야기한다고 상상해보세요.",
+      q1:{ text:"친구는 어떤 마음일까요?", options:["슬플 것 같아요", "속상할 것 같아요", "화날 것 같아요"] }, q2:"판단하지 않고 위로하려면 뭐라고 말할까요?",
+      mission:"'그랬구나, 힘들었겠다' 같은 위로 문장 3개를 적어보세요.",
+      reflect:"위로만 해주는 게 왜 어려웠나요?" },
+    { id:"car3", title:"다르게 힘든 친구", atl:"사회적 기술",
+      context:"몸이 불편하거나 전학 온 친구처럼, 나와 다른 이유로 힘든 친구를 떠올려보세요.",
+      q1:{ text:"그 친구는 무엇이 힘들까요?", options:["몸이 불편해서", "친구가 없어서", "다른 게 낯설어서"] }, q2:"그 친구에게 필요한 배려는 무엇일까요?",
+      mission:"오늘 바로 할 수 있는 배려 한 가지를 골라보세요.",
+      reflect:"배려는 모두에게 같은 모습일까요, 다른 모습일까요?" },
+    { id:"car4", title:"세상을 바꾸는 작은 행동", atl:"자기관리 기술",
+      context:"학교나 동네에서 더 좋아졌으면 하는 것 하나를 정해보세요.",
+      q1:{ text:"왜 그게 바뀌었으면 좋겠나요?", options:["더 안전해지라고", "더 깨끗해지라고", "모두가 즐거우라고"] }, q2:"내가 할 수 있는 아주 작은 일은 무엇일까요?",
+      mission:"그중 하나를 이번 주에 실제로 해보기로 약속해보세요.",
+      reflect:"작은 행동도 세상을 바꿀 수 있다고 생각하나요?" }
+  ],
+  "risk-taker": [
+    { id:"risk1", title:"실패 돌아보기", atl:"자기관리 기술",
+      context:"최근에 실수했던 일을 부끄러워하지 말고 떠올려보세요.",
+      q1:{ text:"그때 나는 무엇에 도전하고 있었나요?", options:["새로운 것", "어려운 것", "처음 해보는 것"] }, q2:"그 실패는 왜 생겼을까요?",
+      mission:"그 실패에서 배운 것 한 가지를 적어보세요.",
+      reflect:"실패를 이야기하는 데 왜 용기가 필요할까요?" },
+    { id:"risk2", title:"두려움 목록", atl:"자기관리 기술",
+      context:"해보고 싶지만 무서워서 못 한 일을 떠올려보세요.",
+      q1:{ text:"왜 무서운가요?", options:["실수할까봐", "놀림받을까봐", "잘 안될까봐"] }, q2:"무서움을 조금 줄이려면 어떻게 시작하면 좋을까요?",
+      mission:"아주 작은 첫걸음 하나를 정해보세요.",
+      reflect:"두려움을 작게 나누니 기분이 어땠나요?" },
+    { id:"risk3", title:"즉석 발표", atl:"의사소통 기술",
+      context:"아무 주제나 하나 골라보세요.",
+      q1:{ text:"그 주제에 대해 아는 것은 무엇인가요?", options:["조금 알아요", "잘 몰라요", "전혀 몰라요"] }, q2:"30초 동안 뭐라고 말하면 좋을까요?",
+      mission:"진짜 소리 내어 말해보세요.",
+      reflect:"준비 없이 도전할 때 마음이 어땠나요?" },
+    { id:"risk4", title:"새로운 규칙 만들기", atl:"사고 기술",
+      context:"내가 아는 놀이 하나를 떠올려보세요.",
+      q1:{ text:"규칙을 어떻게 바꾸면 더 재미있을까요?", options:["더 빠르게", "더 어렵게", "더 웃기게"] }, q2:"바뀐 규칙으로 하면 무엇이 달라질까요?",
+      mission:"새 규칙으로 실제로 한 번 놀아보세요.",
+      reflect:"익숙한 것을 바꿔보니 어떤 점이 재미있었나요?" }
+  ],
+  balanced: [
+    { id:"bal1", title:"하루 돌아보기", atl:"자기관리 기술",
+      context:"오늘 하루를 떠올려보세요.",
+      q1:{ text:"몸, 마음, 공부 중 어디에 시간을 가장 많이 썼나요?", options:["공부", "놀이나 쉬기", "가족이나 친구와 함께"] }, q2:"어디에 시간을 더 쓰고 싶나요?",
+      mission:"내일은 부족했던 것에 10분 더 써보기로 계획해보세요.",
+      reflect:"균형이 무너지면 몸과 마음에 어떤 신호가 오나요?" },
+    { id:"bal2", title:"쉼의 방법", atl:"자기관리 기술",
+      context:"내가 힘들 때를 떠올려보세요.",
+      q1:{ text:"그럴 때 나는 어떻게 쉬나요?", options:["잠을 자요", "놀아요", "혼자 조용히 있어요"] }, q2:"그 방법은 언제 가장 효과적인가요?",
+      mission:"그 방법을 오늘 직접 해보세요.",
+      reflect:"쉬는 것도 노력이 필요하다고 생각하나요?" },
+    { id:"bal3", title:"시간 나누기 계획", atl:"자기관리 기술",
+      context:"하루 24시간을 떠올려보세요.",
+      q1:{ text:"공부, 놀이, 잠, 가족 시간에 각각 얼마나 쓰고 싶나요?", options:["공부를 더", "노는 시간을 더", "고르게 나누고 싶어요"] }, q2:"지금 실제 하루와 비교하면 무엇이 다른가요?",
+      mission:"계획표에서 바꾸고 싶은 부분 하나를 골라보세요.",
+      reflect:"균형 잡힌 하루는 나에게 어떤 모습인가요?" },
+    { id:"bal4", title:"감정 온도계", atl:"자기관리 기술",
+      context:"오늘 내 기분을 떠올려보세요.",
+      q1:{ text:"온도로 나타내면 몇 도인가요?", options:["따뜻해요 (기분 좋음)", "보통이에요", "차가워요 (기분 안 좋음)"] }, q2:"왜 그 온도라고 생각했나요?",
+      mission:"기분을 편안하게 만들 방법 하나를 찾아보세요.",
+      reflect:"내 기분을 스스로 알아차리는 게 왜 중요할까요?" }
+  ],
+  reflective: [
+    { id:"ref1", title:"오늘의 배움", atl:"사고 기술",
+      context:"오늘 가장 크게 배운 것 하나를 떠올려보세요.",
+      q1:{ text:"그건 무엇인가요?", options:["학교에서 배운 것", "친구에게 배운 것", "혼자 알게 된 것"] }, q2:"어떻게 알게 됐나요?",
+      mission:"그 배움을 한 문장으로 요약해보세요.",
+      reflect:"배운 것을 적어보니 생각이 더 정리됐나요?" },
+    { id:"ref2", title:"실수 다시 보기", atl:"자기관리 기술",
+      context:"최근 실수했던 일을 떠올려보세요.",
+      q1:{ text:"무슨 일이 있었나요?", options:["깜빡 잊었어요", "실수로 잘못했어요", "생각을 안 하고 했어요"] }, q2:"다시 한다면 어떻게 다르게 할까요?",
+      mission:"비슷한 일이 생기면 쓸 수 있는 나만의 방법을 적어보세요.",
+      reflect:"실수를 돌아보는 게 왜 도움이 될까요?" },
+    { id:"ref3", title:"강점과 약점", atl:"자기관리 기술",
+      context:"나 자신을 떠올려보세요.",
+      q1:{ text:"내가 잘하는 것은 무엇인가요?", options:["공부", "운동이나 놀이", "친구 사귀기"] }, q2:"내가 아직 잘 못하는 것은 무엇인가요?",
+      mission:"다른 사람에게 내가 몰랐던 나의 장점을 물어보세요.",
+      reflect:"다른 사람이 본 나와 내가 아는 나는 같았나요?" },
+    { id:"ref4", title:"1년 후의 나", atl:"자기관리 기술",
+      context:"1년 후의 나를 상상해보세요.",
+      q1:{ text:"1년 후의 나는 어떤 모습일까요?", options:["더 자란 모습", "더 잘하는 모습", "잘 모르겠어요"] }, q2:"지금의 나에게 뭐라고 말해줄까요?",
+      mission:"그 말을 이루기 위해 이번 주에 할 수 있는 작은 일 하나를 정해보세요.",
+      reflect:"미래의 나를 상상하니 지금 무엇을 다르게 하고 싶어졌나요?" }
+  ]
+};
+
+// Real videos found via web search for the given ("제시된 이야기") scenario on each card.
+// Only cards with a verified, existing video are listed — no invented links.
+const VIDEO_MAP = {
+  inq1: { url: "https://www.youtube.com/watch?v=DWpT87XIjPQ", title: "지식채널e · 위대한 질문" },
+  inq2: { url: "https://www.youtube.com/watch?v=Xu5one8Rzj8", title: "양치기 소년 (거짓말이 반복되면?)" },
+  inq4: { url: "https://www.youtube.com/shorts/OO0sNShBsec", title: "신호등은 누가 발명했을까?" },
+  kno3: { url: "https://www.youtube.com/watch?v=ktvduUxqUSA", title: "세계 여러 나라의 학교 급식 비교" },
+  kno4: { url: "https://www.youtube.com/watch?v=CtDaHJDSLJo", title: "다섯고개 퀴즈놀이 (학용품 편)" },
+  thi1: { url: "https://www.youtube.com/watch?v=9x8WYwaB7ug", title: "의좋은 형제 (전래동화)" },
+  thi2: { url: "https://www.youtube.com/watch?v=9HXm33ezf4Y", title: "초등학생 찬반 토론 실제 모습" },
+  thi3: { url: "https://www.youtube.com/watch?v=mA6NOUaMgJo", title: "원인과 결과 생각하기" },
+  thi4: { url: "https://www.youtube.com/watch?v=b6Lf0izu6OI", title: "클립의 27가지 다른 쓰임" },
+  com1: { url: "https://www.youtube.com/watch?v=jPs-Wlhw0O8", title: "어린이 스피치, 자신 있게 말하기" },
+  com2: { url: "https://www.youtube.com/watch?v=yX4uaxXtzv8", title: "몸으로 말해요 (감정 표현 놀이)" },
+  com3: { url: "https://www.youtube.com/watch?v=wveo2MH5rls", title: "귀를 쫑긋쫑긋 (경청 동화)" },
+  com4: { url: "https://www.youtube.com/watch?v=KAuHnV4pnxM", title: "이유를 들어 제안하는 글쓰기" },
+  pri3: { url: "https://www.youtube.com/watch?v=d86LA2oqYaI", title: "금도끼와 은도끼 (정직 이야기)" },
+  pri4: { url: "https://www.youtube.com/watch?v=ACCJhnR6I8M", title: "솔로몬의 재판 (공정한 판결)" },
+  opn1: { url: "https://www.youtube.com/watch?v=DIGV0JrNAdE", title: "세계 여러 나라의 맛있는 음식" },
+  opn2: { url: "https://www.youtube.com/watch?v=XAxg-5ZBpP0", title: "여우와 두루미 (입장 바꿔 생각하기)" },
+  opn4: { url: "https://www.youtube.com/watch?v=YQlge1z4noQ", title: "동화 속 성역할 고정관념 이야기" },
+  car1: { url: "https://www.youtube.com/watch?v=E91YvKqyi1I", title: "서로 돕고 배려해요 (인성동화)" },
+  car2: { url: "https://www.youtube.com/watch?v=rTKod9GVVVY", title: "마음이 따뜻해지는 배려 (공감동화)" },
+  car3: { url: "https://www.youtube.com/watch?v=50VljpH6FTg", title: "다르다는 건 중요하지 않아 (장애이해)" },
+  car4: { url: "https://www.youtube.com/watch?v=E3w6lSW_pp4", title: "따로 버려요 (분리배출 환경동화)" },
+  risk1: { url: "https://www.youtube.com/watch?v=ti9GSQJp7fs", title: "실수해도 괜찮아! (로보카폴리)" },
+  risk2: { url: "https://www.youtube.com/watch?v=qrpt4YCN8Lw", title: "용기동화 (두려움 이겨내기)" },
+  bal4: { url: "https://www.youtube.com/watch?v=93ZgeaBKHUE", title: "오늘 내 기분은... (감정 동화)" },
+  ref2: { url: "https://www.youtube.com/watch?v=m_fmqRU__KQ", title: "실수해도 괜찮아 (인성 동요)" },
+  ref3: { url: "https://www.youtube.com/watch?v=Ro2TqSw6BF4", title: "너는 특별하단다 (자존감 동화)" },
+  ref4: { url: "https://www.youtube.com/watch?v=IccfbnpTCVI", title: "미래의 나에게 편지쓰기" }
+};
+
+const LEVEL_LABELS = ["씨앗 Lv.1", "새싹 Lv.2", "새싹 Lv.2", "나무 Lv.3", "열매 Lv.4"];
+function levelLabel(done, total) { return LEVEL_LABELS[Math.min(done, total)]; }
+
+const BADGE_TITLES = {
+  inquirer: "탐구왕", knowledgeable: "척척박사", thinker: "생각대장", communicator: "말잘러",
+  principled: "원칙 지킴이", "open-minded": "마음이 넓은 친구", caring: "다정한 친구",
+  "risk-taker": "용기쟁이", balanced: "균형 마스터", reflective: "성찰왕"
+};
+
+/* ---- local profiles: no account, no external login, no server ----
+   Each profile's progress is namespaced by id and stored only in this
+   browser's localStorage, so several people can share one device. */
+const USERS_KEY = "ib_users_v1";
+const AVATARS = ["🦁", "🐯", "🐼", "🦊", "🐰", "🐨", "🐸", "🦄", "🐬", "🦉"];
+function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || { list: [], activeId: null }; } catch (e) { return { list: [], activeId: null }; } }
+function saveUsers() { try { localStorage.setItem(USERS_KEY, JSON.stringify(userState)); } catch (e) {} }
+let userState = loadUsers();
+let pickedAvatar = AVATARS[0];
+function activeUser() { return userState.list.find(u => u.id === userState.activeId); }
+function scopedKey(base) { return base + '__' + (userState.activeId || 'guest'); }
+
+const STORAGE_KEY = "ib_field_notes_v1";
+function loadProgress() { try { return JSON.parse(localStorage.getItem(scopedKey(STORAGE_KEY))) || {}; } catch (e) { return {}; } }
+function saveProgress() { try { localStorage.setItem(scopedKey(STORAGE_KEY), JSON.stringify(progress)); } catch (e) {} }
+function traitProgress(id) { return progress[id] || (progress[id] = { done: [], journal: {} }); }
+function traitTotal(id) { return CARDS[id].length; }
+function traitDoneCount(id) { return traitProgress(id).done.length; }
+function traitBadgeEarned(id) { return traitDoneCount(id) >= traitTotal(id); }
+
+const DAILY_LIMIT = 2;
+function todayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function yesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+const DAILY_KEY = "ib_field_daily_v1", STREAK_KEY = "ib_field_streak_v1";
+function loadDaily() { try { return JSON.parse(localStorage.getItem(scopedKey(DAILY_KEY))) || { date: todayStr(), count: 0 }; } catch (e) { return { date: todayStr(), count: 0 }; } }
+function saveDaily() { try { localStorage.setItem(scopedKey(DAILY_KEY), JSON.stringify(daily)); } catch (e) {} }
+function loadStreak() { try { return JSON.parse(localStorage.getItem(scopedKey(STREAK_KEY))) || { lastDate: null, count: 0 }; } catch (e) { return { lastDate: null, count: 0 }; } }
+function saveStreak() { try { localStorage.setItem(scopedKey(STREAK_KEY), JSON.stringify(streak)); } catch (e) {} }
+function ensureDailyFresh() { if (daily.date !== todayStr()) { daily.date = todayStr(); daily.count = 0; saveDaily(); } }
+function dailyRemaining() { ensureDailyFresh(); return Math.max(0, DAILY_LIMIT - daily.count); }
+function bumpDailyAndStreak() {
+  ensureDailyFresh();
+  daily.count++; saveDaily();
+  if (streak.lastDate !== todayStr()) {
+    streak.count = (streak.lastDate === yesterdayStr()) ? streak.count + 1 : 1;
+    streak.lastDate = todayStr();
+    saveStreak();
+  }
+}
+function loadUserData() { progress = loadProgress(); daily = loadDaily(); streak = loadStreak(); }
+
+let progress = {};
+let daily = { date: todayStr(), count: 0 };
+let streak = { lastDate: null, count: 0 };
+
+let selected = [];
+let queue = [];
+let queueIndex = 0;
+let mcIndex = null;
+let pendingNext = null;
+
+function root() { return document.getElementById('root'); }
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+/* ---------------- screen: local profile gate (no login, no server) ---------------- */
+function updateMastRight() {
+  const el = document.getElementById('mastRight');
+  if (!el) return;
+  const u = activeUser();
+  el.innerHTML = u ? `<button class="profile-chip" onclick="renderUserGate()">${u.avatar} ${u.name} · 전환</button>` : 'IB PYP Field Notes';
+}
+function renderUserGate() {
+  const el = document.getElementById('mastRight');
+  if (el) el.textContent = 'IB PYP Field Notes';
+  pickedAvatar = AVATARS[0];
+  const userCards = userState.list.map(u => `
+    <div class="user-card">
+      <button class="user-card-main" onclick="chooseUser('${u.id}')">
+        <span class="user-avatar">${u.avatar}</span>
+        <span class="user-name">${u.name}</span>
+      </button>
+      <button class="user-del" onclick="deleteUser('${u.id}')" title="프로필 삭제">✕</button>
+    </div>`).join('');
+  const avatarButtons = AVATARS.map((a, i) => `<button type="button" class="avatar-btn ${i === 0 ? 'selected' : ''}" data-a="${a}" onclick="pickAvatar('${a}')">${a}</button>`).join('');
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="eyebrow">Entry No. 00 — Who's exploring?</div>
+      <h1 class="title">누가 탐구할까요?</h1>
+      <p class="lede">한 기기를 여러 명이 함께 써도 프로필을 나누면 각자의 기록이 따로 쌓여요. 계정 로그인이나 외부 사이트 연결 없이, 이 기기 안에만 저장돼요.</p>
+      ${userState.list.length ? `<div class="section-label">프로필 선택</div><div class="user-grid">${userCards}</div>` : ''}
+      <div class="section-label">새 프로필 만들기</div>
+      <input class="field" id="newUserName" placeholder="이름이나 별명 (최대 8자)" maxlength="8">
+      <div class="avatar-grid">${avatarButtons}</div>
+      <button class="btn accent" style="margin-top:.9rem" onclick="createUser()">시작하기 →</button>
+      <p class="user-note">삭제 버튼(✕)을 누르면 그 프로필의 기록이 이 기기에서 완전히 사라져요.</p>
+    </div>`;
+}
+function pickAvatar(a) {
+  pickedAvatar = a;
+  document.querySelectorAll('.avatar-btn').forEach(el => el.classList.toggle('selected', el.dataset.a === a));
+}
+function afterUserChosen() {
+  loadUserData();
+  updateMastRight();
+  renderCover();
+}
+function createUser() {
+  const nameInput = document.getElementById('newUserName');
+  const name = (nameInput.value || '').trim().slice(0, 8) || '탐구자';
+  const id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  userState.list.push({ id, name, avatar: pickedAvatar, createdAt: Date.now() });
+  userState.activeId = id;
+  saveUsers();
+  afterUserChosen();
+}
+function chooseUser(id) {
+  userState.activeId = id;
+  saveUsers();
+  afterUserChosen();
+}
+function deleteUser(id) {
+  if (!confirm('이 프로필과 저장된 기록을 삭제할까요? 되돌릴 수 없어요.')) return;
+  try {
+    localStorage.removeItem(STORAGE_KEY + '__' + id);
+    localStorage.removeItem(DAILY_KEY + '__' + id);
+    localStorage.removeItem(STREAK_KEY + '__' + id);
+  } catch (e) {}
+  userState.list = userState.list.filter(u => u.id !== id);
+  if (userState.activeId === id) userState.activeId = null;
+  saveUsers();
+  renderUserGate();
+}
+function boot() {
+  if (userState.activeId && userState.list.some(u => u.id === userState.activeId)) {
+    loadUserData();
+    updateMastRight();
+    renderCover();
+  } else {
+    renderUserGate();
+  }
+}
+
+/* ---------------- screen: cover / quiz intro ---------------- */
+function renderCover() {
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="tape"></div>
+      <div class="eyebrow">Entry No. 01 — Field Notes</div>
+      <h1 class="title">탐구 카드로 학습자상 키우기</h1>
+      <p class="lede">키우고 싶은 IB PYP 학습자상을 직접 골라, 짧은 이야기와 질문에 답하며 채워가는 탐구 수첩이에요. 진단 없이 바로 시작할 수 있어요.</p>
+      <div class="badge-grid">${PROFILES.map(p => `<div class="badge"><div class="badge-ring" style="border-color:${p.color}55">${p.emoji}</div></div>`).join('')}</div>
+      <button class="btn accent" onclick="renderPicker()">카드 고르기 시작 →</button>
+    </div>`;
+}
+
+function trailHtml(total, current, color) {
+  let html = '<div class="trail">';
+  for (let i = 0; i < total; i++) {
+    html += `<div class="trail-tick ${i < current ? 'done' : ''}" style="${i < current ? `background:${color}` : ''}"></div>`;
+    if (i < total - 1) html += `<div class="trail-bar ${i < current ? 'done' : ''}" style="${i < current ? `background:${color}` : ''}"></div>`;
+  }
+  return html + '</div>';
+}
+
+/* ---------------- screen: trait picker for the question game ---------------- */
+function stampRowHtml(id) {
+  const total = traitTotal(id), done = traitDoneCount(id), color = PROFILE_MAP[id].color;
+  let html = '<div class="stamp-row">';
+  for (let i = 0; i < total; i++) html += `<span class="stamp-box ${i < done ? 'filled' : ''}" style="--tc:${color}"></span>`;
+  return html + '</div>';
+}
+
+function renderPicker() {
+  ensureDailyFresh();
+  const badges = PROFILES.map(p => {
+    const checked = selected.includes(p.id), disabled = !checked && selected.length >= 3;
+    const earned = traitBadgeEarned(p.id);
+    return `<button class="badge ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}" style="--bc:${p.color}" ${disabled ? 'disabled' : ''} onclick="toggleTrait('${p.id}')">
+      <div class="badge-ring" style="border-color:${p.color}66">${p.emoji}${earned ? '<span class="badge-medal">🏅</span>' : ''}</div>
+      <div class="badge-name">${p.name}</div>
+      ${stampRowHtml(p.id)}
+    </button>`;
+  }).join('');
+  const remain = dailyRemaining();
+  const streakLine = streak.count >= 1 ? `🔥 연속 ${streak.count}일째 탐구 중!` : '오늘부터 탐구를 시작해요!';
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="eyebrow">Entry No. 02 — Field Notes</div>
+      <h2 class="title">질문에 답하며 채울 영역</h2>
+      <p class="lede">키우고 싶은 학습자상을 최대 3개까지 골라보세요. 하루에 ${DAILY_LIMIT}장씩, 조금씩 채워가요.</p>
+      <div class="daily-strip">
+        <span>${streakLine}</span>
+        <span class="daily-remain">오늘 남은 카드 ${remain}장</span>
+      </div>
+      <div class="badge-grid">${badges}</div>
+      <p class="select-note">${selected.length} / 3 선택됨</p>
+      <button class="btn accent" ${selected.length === 0 ? 'disabled' : ''} onclick="renderHowto()">다음 →</button>
+      <button class="btn ghost" style="margin-top:.6rem" onclick="renderMap()">🗺️ 나의 탐구 지도 보기</button>
+      <button class="btn ghost" style="margin-top:.6rem" onclick="renderCover()">← 처음으로</button>
+    </div>`;
+}
+function toggleTrait(id) {
+  const i = selected.indexOf(id);
+  if (i >= 0) selected.splice(i, 1); else if (selected.length < 3) selected.push(id);
+  renderPicker();
+}
+
+const MAP_VB_W = 320, MAP_VB_H = 1560;
+
+// Winding trail waypoints, computed (not hand-tuned per point) from a sine sweep.
+function mapWaypoints(n) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const x = 50 + 27 * Math.sin(t * Math.PI * 2.4 + 0.5);
+    const y = 8 + t * 84;
+    pts.push({ x, y });
+  }
+  return pts;
+}
+// Catmull-Rom -> cubic Bezier, so the trail is a smooth computed curve rather than hand-authored path data.
+function smoothPath(points, vbW, vbH) {
+  const pts = points.map(p => [p.x / 100 * vbW, p.y / 100 * vbH]);
+  if (pts.length < 2) return '';
+  let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += `C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)} `;
+  }
+  return d;
+}
+function pineSvg(x, y, scale) {
+  const s = scale;
+  return `<g transform="translate(${x} ${y}) scale(${s})" opacity="0.55">
+    <rect x="-1.5" y="10" width="3" height="7" fill="var(--line-strong)"></rect>
+    <path d="M0,-14 L9,6 L-9,6 Z" fill="var(--moss)"></path>
+    <path d="M0,-6 L7,10 L-7,10 Z" fill="var(--moss)"></path>
+  </g>`;
+}
+function hillSvg(cx, cy, rx, ry, color, opacity) {
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${color}" opacity="${opacity}"></ellipse>`;
+}
+
+function renderMap() {
+  const pts = mapWaypoints(PROFILES.length);
+  const trailD = smoothPath(pts, MAP_VB_W, MAP_VB_H);
+  const allComplete = PROFILES.every(p => traitBadgeEarned(p.id));
+
+  const hills = [
+    hillSvg(40, 120, 130, 70, 'var(--moss)', 0.14),
+    hillSvg(280, 340, 110, 60, 'var(--brass)', 0.12),
+    hillSvg(30, 620, 120, 65, 'var(--brass)', 0.12),
+    hillSvg(290, 860, 130, 70, 'var(--moss)', 0.14),
+    hillSvg(20, 1120, 110, 60, 'var(--moss)', 0.12),
+    hillSvg(300, 1380, 130, 75, 'var(--brass)', 0.14)
+  ].join('');
+  const trees = [
+    pineSvg(46, 70, 1.1), pineSvg(268, 250, 1.3), pineSvg(50, 470, 1),
+    pineSvg(260, 560, 1.2), pineSvg(40, 980, 1.1), pineSvg(270, 1240, 1.3),
+    pineSvg(46, 1460, 1.1)
+  ].join('');
+  const endX = pts[pts.length - 1].x / 100 * MAP_VB_W, endY = pts[pts.length - 1].y / 100 * MAP_VB_H + 90;
+
+  const pins = PROFILES.map((p, i) => {
+    const total = traitTotal(p.id), done = traitDoneCount(p.id), earned = traitBadgeEarned(p.id);
+    const state = earned ? 'complete' : (done > 0 ? 'active' : 'muted');
+    return `<div class="map-pin ${state}" style="--tc:${p.color}; left:${pts[i].x}%; top:${pts[i].y}%">
+      <div class="map-pin-dot">${earned ? '🏅' : p.emoji}${earned ? '<span class="map-pin-flag">🚩</span>' : ''}</div>
+      <div class="map-pin-card">
+        <div class="map-pin-name">${p.name}</div>
+        <div class="map-pin-title">${earned ? BADGE_TITLES[p.id] : levelLabel(done, total)}</div>
+        ${stampRowHtml(p.id)}
+      </div>
+    </div>`;
+  }).join('');
+
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="eyebrow">나의 탐구 지도</div>
+      <h2 class="title">10개 학습자상 여정</h2>
+      <p class="lede">카드를 채울수록 길을 따라 깃발이 채워지고, 4칸을 다 채우면 뱃지를 받아요.</p>
+      <div class="map-scene">
+        <svg viewBox="0 0 ${MAP_VB_W} ${MAP_VB_H}" preserveAspectRatio="xMidYMid slice">
+          ${hills}${trees}
+          <path d="${trailD}" fill="none" stroke="var(--line-strong)" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 13"></path>
+          <text x="${pts[0].x / 100 * MAP_VB_W}" y="${pts[0].y / 100 * MAP_VB_H - 42}" text-anchor="middle" font-size="13" fill="var(--ink-faint)" font-family="ui-monospace, monospace">START 🏁</text>
+          <text x="${endX}" y="${endY}" text-anchor="middle" font-size="26">${allComplete ? '🏆' : '🎁'}</text>
+          <text x="${endX}" y="${endY + 20}" text-anchor="middle" font-size="11" fill="var(--ink-faint)" font-family="ui-monospace, monospace">${allComplete ? 'COMPLETE!' : 'GOAL'}</text>
+        </svg>
+        ${pins}
+      </div>
+      <div class="map-legend">
+        <span>⚪ 시작 전</span>
+        <span>🎨 진행 중</span>
+        <span>🚩 뱃지 완료</span>
+      </div>
+      <button class="btn accent" style="margin-top:1rem" onclick="renderPicker()">← 돌아가기</button>
+    </div>`;
+}
+
+function renderHowto() {
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="eyebrow">How to use this page</div>
+      <h2 class="title">질문에 답하며 생각 넓히기</h2>
+      <p class="lede">카드마다 짧은 이야기와 질문 두 개가 나와요. 질문 1은 골라서, 질문 2는 직접 적으며 생각이 점점 넓어져요.</p>
+      <div class="rank-row" style="grid-template-columns:22px 1fr"><span class="rank-num">01</span><span>오늘의 이야기를 읽어요.</span></div>
+      <div class="rank-row" style="grid-template-columns:22px 1fr"><span class="rank-num">02</span><span>질문 1은 마음에 드는 답을 골라요.</span></div>
+      <div class="rank-row" style="grid-template-columns:22px 1fr"><span class="rank-num">03</span><span>질문 2는 내 생각을 직접 적어봐요.</span></div>
+      <div class="rank-row" style="grid-template-columns:22px 1fr"><span class="rank-num">04</span><span>탐구 활동을 하고, 배운 점을 적어요.</span></div>
+      <button class="btn accent" style="margin-top:1rem" onclick="startQueue()">카드 뽑기 시작 →</button>
+    </div>`;
+}
+
+function startQueue() {
+  const remain = dailyRemaining();
+  if (remain <= 0) { renderDailyCap(); return; }
+  let cards = [];
+  selected.forEach(id => { const tp = traitProgress(id); CARDS[id].forEach(c => { if (!tp.done.includes(c.id)) cards.push({ ...c, profileId: id }); }); });
+  queue = shuffle(cards).slice(0, remain);
+  queueIndex = 0;
+  if (queue.length === 0) { renderSummary(); return; }
+  renderCard();
+}
+
+function escapeAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+
+function renderCard() {
+  if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+  const c = queue[queueIndex], p = PROFILE_MAP[c.profileId];
+  const tp = traitProgress(c.profileId), saved = tp.journal[c.id] || {};
+  mcIndex = (saved.a1Index !== undefined) ? saved.a1Index : null;
+  contextCustomMode = !!saved.useCustomContext;
+
+  const CUSTOM_IDX = c.q1.options.length; // last option = "write my own"
+  const mcAll = c.q1.options.concat(['✍️ 내 생각을 직접 쓸래요']);
+  const mcOptions = mcAll.map((opt, i) => `
+    <button class="opt ${mcIndex === i ? 'sel' : ''}" onclick="pickMc(${i})"><span class="dot"></span>${opt}</button>`).join('');
+  const searchQuery = c.title;
+
+  root().innerHTML = `
+    ${trailHtml(queue.length, queueIndex, p.color)}
+    <div class="sheet">
+      <div class="card-tag-row">
+        <span class="tag trait" style="--tc:${p.color}">${p.emoji} ${p.name}</span>
+        <span class="tag atl">ATL · ${c.atl}</span>
+        <span class="card-no">No. ${String(queueIndex + 1).padStart(2, '0')} / ${String(queue.length).padStart(2, '0')}</span>
+      </div>
+      <h2 class="title">${c.title}</h2>
+      <div class="section-label">탐구 상황</div>
+      <div class="context-toggle">
+        <button type="button" class="toggle-btn ${!contextCustomMode ? 'active' : ''}" onclick="setContextMode(false)">제시된 이야기</button>
+        <button type="button" class="toggle-btn ${contextCustomMode ? 'active' : ''}" onclick="setContextMode(true)">내 이야기 직접 쓰기</button>
+      </div>
+      <div id="contextBody">${contextCustomMode
+        ? `<textarea class="field" id="customContextInput" placeholder="나에게 있었던 비슷한 상황을 직접 적어보세요...">${saved.customContext || ''}</textarea>`
+        : contextDefaultHtml(c)}</div>
+
+      <div class="tool-bar">
+        <div class="tool-bar-label">이 상황, 직접 찾아보거나 해볼 수 있어요</div>
+        <div class="tool-row">
+          <input class="field" id="searchQuery" value="${escapeAttr(searchQuery)}" oninput="updateSearchLink()">
+          <a class="tool-link" id="searchLink" href="https://www.google.com/search?q=${encodeURIComponent(searchQuery)}" target="_blank" rel="noopener">🔍 검색하기</a>
+        </div>
+        <div class="tool-row">
+          <span class="timer-display" id="timerDisplay">00:30</span>
+          <button type="button" class="timer-btn2" id="timerBtn" onclick="toggleTimer()">⏱️ 30초 도전</button>
+        </div>
+      </div>
+
+      <div class="section-label">질문 1 · 골라보세요</div>
+      <div class="qa-block">
+        <div class="ask"><span class="ask-badge">Q1</span><span class="ask-text">${c.q1.text}</span></div>
+        <div class="opt-list" id="mcList">${mcOptions}</div>
+        <div id="a1CustomWrap" ${mcIndex === CUSTOM_IDX ? '' : 'hidden'}>
+          <textarea class="field" id="a1CustomInput" placeholder="내 생각을 자유롭게 적어보세요...">${mcIndex === CUSTOM_IDX ? (saved.a1Custom || '') : ''}</textarea>
+        </div>
+      </div>
+      <div class="section-label">질문 2 · 적어보세요</div>
+      <div class="qa-block">
+        <div class="ask"><span class="ask-badge">Q2</span><span class="ask-text">${c.q2}</span></div>
+        <textarea class="field" id="a2Input" placeholder="나의 대답을 적어보세요...">${saved.a2 || ''}</textarea>
+      </div>
+
+      <div class="section-label">탐구 활동</div>
+      <p class="mission-text">${c.mission}</p>
+      <label class="mission-check"><input type="checkbox" id="missionDone" ${saved.missionDone ? 'checked' : ''}> 이 활동을 실제로 해봤어요</label>
+      <div class="section-label">성찰</div>
+      <p class="body-text">${c.reflect}</p>
+      <textarea class="field" id="journalInput" placeholder="나의 생각을 적어보세요...">${saved.reflect || ''}</textarea>
+      <button class="btn accent" style="margin-top:1rem" onclick="completeCard()">완료! 다음 카드 →</button>
+    </div>`;
+}
+let contextCustomMode = false;
+function contextDefaultHtml(c) {
+  const v = VIDEO_MAP[c.id];
+  return `<p class="body-text">${c.context}</p>` +
+    (v ? `<a class="video-link" href="${escapeAttr(v.url)}" target="_blank" rel="noopener">🎥 예시 영상 보기 · ${escapeAttr(v.title)}</a>` : '');
+}
+function setContextMode(custom) {
+  contextCustomMode = custom;
+  document.querySelectorAll('.toggle-btn').forEach((el, i) => el.classList.toggle('active', (i === 1) === custom));
+  const c = queue[queueIndex], tp = traitProgress(c.profileId), saved = tp.journal[c.id] || {};
+  document.getElementById('contextBody').innerHTML = custom
+    ? `<textarea class="field" id="customContextInput" placeholder="나에게 있었던 비슷한 상황을 직접 적어보세요...">${saved.customContext || ''}</textarea>`
+    : contextDefaultHtml(c);
+}
+function updateSearchLink() {
+  const q = document.getElementById('searchQuery').value.trim();
+  document.getElementById('searchLink').href = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+}
+let timerHandle = null, timerSeconds = 30;
+function toggleTimer() {
+  const display = document.getElementById('timerDisplay'), btn = document.getElementById('timerBtn');
+  if (timerHandle) {
+    clearInterval(timerHandle); timerHandle = null;
+    timerSeconds = 30; display.textContent = '00:30'; btn.textContent = '⏱️ 30초 도전';
+    return;
+  }
+  timerSeconds = 30;
+  btn.textContent = '⏹️ 멈추기';
+  timerHandle = setInterval(() => {
+    timerSeconds--;
+    if (timerSeconds <= 0) {
+      clearInterval(timerHandle); timerHandle = null;
+      display.textContent = '완료! 🎉'; btn.textContent = '⏱️ 다시 하기'; timerSeconds = 30;
+      return;
+    }
+    display.textContent = '00:' + String(timerSeconds).padStart(2, '0');
+  }, 1000);
+}
+function pickMc(i) {
+  mcIndex = i;
+  document.querySelectorAll('#mcList .opt').forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  const wrap = document.getElementById('a1CustomWrap');
+  const c = queue[queueIndex];
+  wrap.hidden = (i !== c.q1.options.length);
+}
+function completeCard() {
+  if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+  const c = queue[queueIndex], tp = traitProgress(c.profileId);
+  const CUSTOM_IDX = c.q1.options.length;
+  const a2 = document.getElementById('a2Input').value.trim();
+  const reflectText = document.getElementById('journalInput').value.trim();
+  const missionDone = document.getElementById('missionDone').checked;
+  const customContextEl = document.getElementById('customContextInput');
+  const a1CustomEl = document.getElementById('a1CustomInput');
+  const alreadyHad = tp.done.includes(c.id);
+  if (!alreadyHad) tp.done.push(c.id);
+  tp.journal[c.id] = {
+    useCustomContext: contextCustomMode,
+    customContext: customContextEl ? customContextEl.value.trim() : (tp.journal[c.id]?.customContext || ''),
+    a1Index: mcIndex,
+    a1: mcIndex === CUSTOM_IDX ? (a1CustomEl ? a1CustomEl.value.trim() : '') : (mcIndex !== null ? c.q1.options[mcIndex] : ''),
+    a1Custom: mcIndex === CUSTOM_IDX && a1CustomEl ? a1CustomEl.value.trim() : '',
+    a2, reflect: reflectText, missionDone
+  };
+  saveProgress();
+  bumpDailyAndStreak();
+  queueIndex++;
+
+  const newlyEarned = !alreadyHad && traitBadgeEarned(c.profileId);
+  const capReached = dailyRemaining() <= 0;
+  const queueDone = queueIndex >= queue.length;
+
+  if (newlyEarned) {
+    pendingNext = capReached ? 'cap' : (queueDone ? 'summary' : 'card');
+    renderBadgeEarned(c.profileId);
+    return;
+  }
+  if (capReached) { renderDailyCap(); return; }
+  if (queueDone) { renderSummary(); return; }
+  renderCard();
+}
+function continueAfterBadge() {
+  if (pendingNext === 'cap') renderDailyCap();
+  else if (pendingNext === 'summary') renderSummary();
+  else renderCard();
+  pendingNext = null;
+}
+function renderBadgeEarned(id) {
+  const p = PROFILE_MAP[id];
+  root().innerHTML = `
+    <div class="sheet badge-sheet">
+      <div class="badge-medal-big" style="--tc:${p.color}">${p.emoji}</div>
+      <div class="badge-earned-kicker">뱃지 획득!</div>
+      <div class="badge-earned-title">${BADGE_TITLES[id]}</div>
+      <p class="lede" style="text-align:center">${p.name} 카드 4장을 모두 채웠어요.<br>탐구 지도에 뱃지가 반짝여요.</p>
+      <button class="btn accent" onclick="continueAfterBadge()">계속하기 →</button>
+    </div>`;
+}
+function renderDailyCap() {
+  const streakLine = streak.count > 1 ? `🔥 연속 ${streak.count}일째!` : '오늘 첫 탐구를 마쳤어요!';
+  root().innerHTML = `
+    <div class="sheet" style="text-align:center">
+      <div class="badge-medal-big" style="--tc:var(--brass)">✅</div>
+      <h2 class="title">오늘의 탐구 카드를 다 썼어요</h2>
+      <p class="lede">${streakLine}<br>내일 또 ${DAILY_LIMIT}장이 채워져요. 조금씩 천천히 채워가요.</p>
+      <button class="btn accent" onclick="renderMap()">🗺️ 나의 탐구 지도 보기</button>
+      <button class="btn ghost" style="margin-top:.6rem" onclick="renderPicker()">← 돌아가기</button>
+    </div>`;
+}
+
+function renderSummary() {
+  const rows = selected.map(id => {
+    const p = PROFILE_MAP[id], total = traitTotal(id), done = traitDoneCount(id);
+    const pct = Math.round(done / total * 100), finished = traitBadgeEarned(id);
+    return `<div class="summary-row">
+      <div class="summary-badge" style="--tc:${p.color}">${finished ? '🏅' : p.emoji}</div>
+      <div class="summary-body">
+        <div class="summary-name">${p.name}</div>
+        <div class="summary-lvl">${levelLabel(done, total)} · ${done}/${total}</div>
+        <div class="summary-bar-wrap"><div class="summary-bar" style="width:${pct}%; --tc:${p.color}"></div></div>
+      </div>
+      ${finished ? '<span class="summary-done">완료</span>' : ''}
+    </div>`;
+  }).join('');
+  const remain = dailyRemaining();
+  root().innerHTML = `
+    <div class="sheet">
+      <div class="eyebrow">Entry closed</div>
+      <h2 class="title">오늘의 탐구를 마쳤어요</h2>
+      <p class="lede">질문에 답하며 생각한 시간이 학습자상을 조금씩 채워가고 있어요. ${remain > 0 ? `오늘 ${remain}장 더 할 수 있어요.` : '오늘 준비된 카드는 다 했어요.'}</p>
+      ${rows}
+      ${remain > 0 ? '<button class="btn accent" style="margin-top:1rem" onclick="renderPicker()">다른 영역 채우기</button>' : '<button class="btn accent" style="margin-top:1rem" onclick="renderDailyCap()">오늘 마무리하기</button>'}
+      <button class="btn ghost" style="margin-top:.6rem" onclick="renderMap()">🗺️ 나의 탐구 지도 보기</button>
+      <button class="btn ghost" style="margin-top:.6rem" onclick="renderCover()">↺ 처음으로 다시</button>
+    </div>
+    <p class="foot-note">IB PYP FIELD NOTES · QUESTION CARDS EDITION</p>`;
+}
+
+boot();
+</script>
