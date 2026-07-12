@@ -211,6 +211,13 @@ svg.radar { display: block; width: 100%; height: auto; overflow: visible; }
 .print-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
 .print-footer { display: none; }
 
+.growth-cta { margin-top: 1.6rem; padding: 1.2rem 1.1rem; background: var(--accent-tint); border: 1.5px solid var(--pc, var(--accent)); border-radius: var(--radius-lg); text-align: center; }
+.growth-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--pc, var(--accent-strong)); margin-bottom: .35rem; }
+.growth-text { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: .8rem; }
+.growth-text b { color: var(--ink); }
+.growth-btn { display: block; width: 100%; box-sizing: border-box; padding: 0.85rem; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; text-decoration: none; color: #fff; background: var(--pc, var(--accent)); transition: filter .15s; }
+.growth-btn:hover { filter: brightness(1.08); }
+
 /* ---------- Toast ---------- */
 .toast { position: fixed; left: 50%; bottom: 1.6rem; transform: translateX(-50%) translateY(12px); background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 600; padding: 0.7rem 1.1rem; border-radius: 999px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -234,7 +241,7 @@ footer.hint { text-align: center; font-size: 12px; color: var(--ink-faint); marg
   body { padding: 0; background: #fff; }
   .app { max-width: 100%; }
   .share-btn, .toast, .trail, .q-tag, .question-card, .nav,
-  .intro-card, .result-actions, .print-btn, footer.hint { display: none !important; }
+  .intro-card, .result-actions, .print-btn, .growth-cta, footer.hint { display: none !important; }
   .rosette::before { animation: none !important; }
   .question-card, .result-header, .radar-card, .score-row { opacity: 1 !important; transform: none !important; }
   .top-result, .radar-card, .score-row { break-inside: avoid; }
@@ -442,8 +449,19 @@ function renderResult() {
       <button class="restart-btn" onclick="restart()">↺ 다시 하기</button>
     </div>
     <button class="print-btn" onclick="window.print()">🖨️ 인쇄 · PDF로 저장</button>
+    ${buildGrowthCta(sorted)}
     <footer class="hint">이 링크를 그대로 보내면 누구든 바로 진단을 시작할 수 있어요.</footer>
     <p class="print-footer">IB PYP 학습자상 자가진단 · ${new Date().toLocaleDateString('ko-KR')} · ${location.href}</p>`;
+}
+function buildGrowthCta(sorted) {
+  const weakest = sorted[sorted.length - 1];
+  const second = sorted[sorted.length - 2];
+  const ids = [weakest.id, second.id].join(',');
+  return `<div class="growth-cta" style="--pc:${weakest.color}">
+    <div class="growth-eyebrow">다음 단계</div>
+    <p class="growth-text">상대적으로 점수가 낮았던 <b>${weakest.name}</b>, <b>${second.name}</b> 영역은<br>IB 핵심 개념으로 만드는 탐구 질문으로 키워볼 수 있어요.</p>
+    <a class="growth-btn" href="ib-thinking-game.html?weak=${ids}">🧠 IB 질문 씽킹게임으로 키우기 →</a>
+  </div>`;
 }
 function buildRadar(top, maxScore) {
   const cx = 130, cy = 130, maxR = 78, n = profiles.length;

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IB 질문 씽킹게임 · 학습자상 키우기</title>
+<meta name="description" content="IB PYP 학습자상 진단에서 부족했던 영역을, IB의 핵심 개념(Key Concepts)으로 스스로 좋은 탐구 질문을 만들어보는 씽킹게임.">
+<style>
+:root {
+  --bg: #F1F4EF; --surface: #FFFFFF; --surface-2: #E9EEE6;
+  --ink: #16241F; --ink-soft: #55665D; --ink-faint: #8A9790;
+  --line: #DEE6DA; --accent: #1F6F5C; --accent-strong: #123F34; --accent-tint: #E3EFE9;
+  --shadow: 0 1px 2px rgba(22,36,31,.04), 0 8px 24px rgba(22,36,31,.06);
+  --radius-lg: 20px; --radius-md: 14px; --radius-sm: 9px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0E1815; --surface: #16241F; --surface-2: #1C2C26; --ink: #EAF1EC;
+    --ink-soft: #A9BBB2; --ink-faint: #6F8079; --line: #263730; --accent: #52CDAC;
+    --accent-strong: #9BE7D0; --accent-tint: #1B332C;
+    --shadow: 0 1px 2px rgba(0,0,0,.24), 0 8px 28px rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1815; --surface: #16241F; --surface-2: #1C2C26; --ink: #EAF1EC;
+  --ink-soft: #A9BBB2; --ink-faint: #6F8079; --line: #263730; --accent: #52CDAC;
+  --accent-strong: #9BE7D0; --accent-tint: #1B332C;
+  --shadow: 0 1px 2px rgba(0,0,0,.24), 0 8px 28px rgba(0,0,0,.32);
+}
+:root[data-theme="light"] {
+  --bg: #F1F4EF; --surface: #FFFFFF; --surface-2: #E9EEE6; --ink: #16241F;
+  --ink-soft: #55665D; --ink-faint: #8A9790; --line: #DEE6DA; --accent: #1F6F5C;
+  --accent-strong: #123F34; --accent-tint: #E3EFE9;
+  --shadow: 0 1px 2px rgba(22,36,31,.04), 0 8px 24px rgba(22,36,31,.06);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  line-height: 1.5; -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 480px; margin: 0 auto; padding: 1.6rem 1.1rem 3rem; }
+.top-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.brand { font-size: 13.5px; font-weight: 700; color: var(--accent-strong); text-decoration: none; }
+.back-link { font-size: 12.5px; color: var(--ink-faint); text-decoration: none; }
+.back-link:hover { color: var(--ink-soft); }
+h1.page-title { font-size: 19px; font-weight: 800; margin: 0 0 .3rem; }
+.page-sub { font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; margin: 0 0 1.3rem; }
+
+.card-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 1.5rem 1.3rem; box-shadow: var(--shadow); margin-bottom: 1.1rem; animation: rise .35s ease; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.howto-steps { display: flex; flex-direction: column; gap: .6rem; margin: 1rem 0; }
+.howto-step { display: flex; gap: .7rem; align-items: flex-start; font-size: 13.5px; color: var(--ink-soft); }
+.howto-num { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--accent-tint); color: var(--accent-strong); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+.trait-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin: 1rem 0 1.3rem; }
+.trait-chip { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; padding: .75rem .8rem; border: 1.5px solid var(--line); border-radius: var(--radius-md); background: var(--surface); cursor: pointer; text-align: left; transition: border-color .15s, background .15s; }
+.trait-chip .row1 { display: flex; align-items: center; gap: .4rem; font-size: 13.5px; font-weight: 700; }
+.trait-chip .lvl { font-size: 10.5px; font-weight: 700; color: var(--ink-faint); }
+.trait-chip.checked { border-color: var(--tc); background: var(--tc-tint); }
+.trait-chip.disabled { opacity: .4; cursor: not-allowed; }
+.trait-check { position: absolute; top: .55rem; right: .6rem; width: 16px; height: 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); }
+.trait-chip.checked .trait-check { background: var(--tc); border-color: var(--tc); }
+
+.select-hint { font-size: 12px; color: var(--ink-faint); margin: -0.6rem 0 1rem; }
+.start-btn, .primary-btn { display: block; width: 100%; padding: 0.9rem; border: none; border-radius: var(--radius-md); background: var(--accent); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: filter .15s, opacity .15s; }
+.start-btn:hover, .primary-btn:hover { filter: brightness(1.08); }
+.start-btn:disabled { opacity: .35; cursor: not-allowed; }
+.ghost-btn { display: block; width: 100%; padding: 0.85rem; border: 1.5px solid var(--line); border-radius: var(--radius-md); background: transparent; color: var(--ink-soft); font-size: 13.5px; font-weight: 600; cursor: pointer; margin-top: .6rem; text-align: center; text-decoration: none; }
+.ghost-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+
+.trail { display: flex; align-items: center; margin-bottom: 1rem; }
+.trail-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--line); flex: none; }
+.trail-dot.done { background: var(--tc, var(--accent)); }
+.trail-seg { flex: 1; height: 2px; background: var(--line); margin: 0 3px; position: relative; overflow: hidden; }
+.trail-seg::after { content: ''; position: absolute; inset: 0; width: var(--fill, 0%); background: var(--tc, var(--accent)); transition: width .3s; }
+
+.card-tag { display: inline-flex; align-items: center; gap: .35rem; font-size: 12px; font-weight: 700; color: var(--tc, var(--accent-strong)); background: var(--tc-tint, var(--accent-tint)); padding: .3rem .65rem; border-radius: 999px; margin-bottom: .7rem; }
+.atl-tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; color: var(--ink-faint); background: var(--surface-2); padding: .25rem .55rem; border-radius: 999px; margin: 0 0 .7rem .4rem; }
+.card-title { font-size: 18px; font-weight: 800; margin: 0 0 .8rem; }
+.section-label { font-size: 11.5px; font-weight: 800; letter-spacing: .04em; color: var(--ink-faint); text-transform: uppercase; margin: 1.1rem 0 .4rem; }
+.section-label:first-of-type { margin-top: 0; }
+.scenario-text, .mission-text, .reflect-q { font-size: 14.5px; color: var(--ink); line-height: 1.65; margin: 0; }
+.mission-text { color: var(--ink-soft); }
+
+.concept-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; margin: .4rem 0 .7rem; }
+.concept-chip { position: relative; display: flex; flex-direction: column; align-items: center; gap: .15rem; padding: .5rem .3rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 11px; font-weight: 700; color: var(--ink-soft); text-align: center; }
+.concept-chip.suggested::after { content: '★'; position: absolute; top: 2px; right: 4px; font-size: 9px; color: var(--tc, var(--accent)); }
+.concept-chip.selected { border-color: var(--tc, var(--accent)); background: var(--tc-tint, var(--accent-tint)); color: var(--ink); }
+.concept-emoji { font-size: 15px; }
+.concept-hint { font-size: 12.5px; color: var(--ink-faint); margin: 0 0 .5rem; min-height: 1.2em; }
+.question-input, .journal-input { width: 100%; margin-top: .3rem; padding: .7rem .8rem; border: 1.5px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font-size: 14px; font-family: inherit; resize: vertical; min-height: 56px; }
+.question-input:focus, .journal-input:focus { border-color: var(--tc, var(--accent)); }
+
+.progress-bar-row { display: flex; align-items: center; gap: .6rem; font-size: 12px; color: var(--ink-faint); margin: .9rem 0 .3rem; }
+.progress-bar { flex: 1; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--tc, var(--accent)); transition: width .3s; }
+
+.summary-row { display: flex; align-items: center; gap: .7rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: .75rem .85rem; margin-bottom: .6rem; }
+.summary-emoji { font-size: 22px; }
+.summary-body { flex: 1; }
+.summary-name { font-size: 14px; font-weight: 700; }
+.summary-lvl { font-size: 12px; color: var(--ink-soft); }
+.summary-badge { font-size: 11px; font-weight: 800; color: #fff; background: var(--tc, var(--accent)); padding: .25rem .55rem; border-radius: 999px; }
+
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 12px); background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 600; padding: .6rem 1rem; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-nav">
+    <a class="brand" href="index.html">🧭 IB 학습자상</a>
+    <a class="back-link" href="index.html">← 진단 다시 하기</a>
+  </div>
+  <div id="root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</div>
+<script>
+const PROFILES = [
+  { id: "inquirer", name: "탐구하는 사람", short: "탐구", emoji: "🔍", color: "#185FA5" },
+  { id: "knowledgeable", name: "지식이 풍부한 사람", short: "지식", emoji: "📚", color: "#0F6E56" },
+  { id: "thinker", name: "생각하는 사람", short: "생각", emoji: "💡", color: "#534AB7" },
+  { id: "communicator", name: "소통하는 사람", short: "소통", emoji: "💬", color: "#BA7517" },
+  { id: "principled", name: "원칙이 있는 사람", short: "원칙", emoji: "⚖️", color: "#3C3489" },
+  { id: "open-minded", name: "열린 마음의 사람", short: "열린마음", emoji: "🌍", color: "#993C1D" },
+  { id: "caring", name: "배려하는 사람", short: "배려", emoji: "❤️", color: "#993556" },
+  { id: "risk-taker", name: "도전하는 사람", short: "도전", emoji: "🚀", color: "#3B6D11" },
+  { id: "balanced", name: "균형 잡힌 사람", short: "균형", emoji: "☯️", color: "#0C447C" },
+  { id: "reflective", name: "성찰하는 사람", short: "성찰", emoji: "🪞", color: "#5F5E5A" }
+];
+const PROFILE_MAP = Object.fromEntries(PROFILES.map(p => [p.id, p]));
+const MAX_SELECT = 3;
+
+// IB PYP의 8가지 핵심 개념(Key Concepts) — 좋은 탐구 질문을 만드는 8가지 렌즈
+const KEY_CONCEPTS = [
+  { id: "form", name: "형태", en: "Form", emoji: "🔷", hint: "그것은 어떤 특징이 있나요?" },
+  { id: "function", name: "기능", en: "Function", emoji: "⚙️", hint: "그것은 어떻게 작동/사용되나요?" },
+  { id: "causation", name: "원인", en: "Causation", emoji: "🔗", hint: "왜 이런 일이 일어날까요?" },
+  { id: "change", name: "변화", en: "Change", emoji: "🌊", hint: "그것은 어떻게 바뀌고 있나요?" },
+  { id: "connection", name: "연결", en: "Connection", emoji: "🕸️", hint: "이것은 무엇과 연결되어 있나요?" },
+  { id: "perspective", name: "관점", en: "Perspective", emoji: "👀", hint: "다른 사람은 이것을 어떻게 볼까요?" },
+  { id: "responsibility", name: "책임", en: "Responsibility", emoji: "🌱", hint: "우리가 할 수 있는 것은 무엇일까요?" },
+  { id: "reflection", name: "성찰", en: "Reflection", emoji: "🪞", hint: "우리는 그것을 어떻게 알 수 있을까요?" }
+];
+const CONCEPT_MAP = Object.fromEntries(KEY_CONCEPTS.map(c => [c.id, c]));
+
+const CARDS = {
+  inquirer: [
+    { id:"inq1", title:"궁금증의 씨앗", atl:"조사 기술", suggested:["causation","reflection"],
+      scenario:"오늘 하루 동안 스쳐 지나간 질문들 중 아직 답을 못 찾은 게 있나요? 그 질문을 떠올리며 왜 궁금해졌는지 적어보세요.",
+      mission:"탐구 활동: 그 질문에 대한 답을 책이나 인터넷에서 찾아보고, 새로 알게 된 사실 1가지를 적어보세요.",
+      reflect:"오늘 나에게 가장 흥미로웠던 질문은 무엇이었나요?" },
+    { id:"inq2", title:"질문을 파고들기", atl:"사고 기술", suggested:["causation","connection"],
+      scenario:"'사람들은 왜 거짓말을 할까?'라는 주제를 떠올려보세요. 첫 답을 적고, 그 답에 다시 '왜?'라고 물으며 이유를 5단계까지 파고들어 적어보세요.",
+      mission:"탐구 활동: 다섯 번째 '왜?'까지 갔을 때 나온 진짜 이유를 한 문장으로 정리해보세요.",
+      reflect:"질문을 계속 파고드니 처음 생각과 무엇이 달라졌나요?" },
+    { id:"inq3", title:"만약에 질문", atl:"사고 기술", suggested:["change","causation"],
+      scenario:"'만약 학교에 시험이 없다면 어떻게 될까?'처럼 엉뚱한 '만약에' 질문을 3개 만들어보세요.",
+      mission:"탐구 활동: 그중 가장 흥미로운 질문 하나를 골라, 실제로 그렇게 되면 벌어질 일을 상상해서 적어보세요.",
+      reflect:"어떤 '만약에' 질문이 나를 가장 오래 생각하게 만들었나요?" },
+    { id:"inq4", title:"작은 탐구자", atl:"조사 기술", suggested:["function","form"],
+      scenario:"우리 주변에 있지만 아무도 신경 쓰지 않는 물건(연필, 신호등, 우산 등) 하나를 골라, '이건 어떻게 작동할까?', '누가 처음 만들었을까?'를 추리해보세요.",
+      mission:"탐구 활동: 나중에 진짜 답을 찾아보고, 나의 추리가 맞았는지 확인해보세요.",
+      reflect:"추리하는 과정에서 어떤 점이 즐거웠나요?" }
+  ],
+  knowledgeable: [
+    { id:"kno1", title:"연결고리 찾기", atl:"사고 기술", suggested:["connection","causation"],
+      scenario:"오늘 배운 것 중 하나를 골라, 이미 알고 있던 다른 지식과 어떻게 연결되는지 생각해보세요.",
+      mission:"탐구 활동: 두 지식을 연결한 그림이나 화살표 지도를 그려보세요.",
+      reflect:"연결하면서 새롭게 깨달은 점은 무엇인가요?" },
+    { id:"kno2", title:"내가 선생님", atl:"의사소통 기술", suggested:["form","function"],
+      scenario:"내가 가장 자신 있는 주제를 정해, 마치 선생님이 된 것처럼 1분 동안 설명하는 내용을 적어보세요.",
+      mission:"탐구 활동: 다른 사람에게 실제로 그 주제를 설명해 보고, 어떤 질문을 받았는지 적어보세요.",
+      reflect:"설명하면서 내가 확실히 아는 것과 애매하게 아는 것을 구분할 수 있었나요?" },
+    { id:"kno3", title:"다른 나라라면?", atl:"조사 기술", suggested:["perspective","connection"],
+      scenario:"우리가 배운 개념(예: 화폐, 계절, 학교) 하나가 다른 나라에서는 어떻게 다를지 추측해보세요.",
+      mission:"탐구 활동: 실제로 찾아보고 나의 추측과 비교해보세요.",
+      reflect:"다른 나라 사례를 알고 나니 우리나라에 대해 새롭게 보인 점이 있나요?" },
+    { id:"kno4", title:"지식 카드 만들기", atl:"조사 기술", suggested:["form","connection"],
+      scenario:"내가 아는 분야에서 재미있는 문제를 하나 만들어보고, 그 답과 이유를 적어보세요.",
+      mission:"탐구 활동: 오늘 배운 새로운 지식 3가지를 목록으로 만들어보세요.",
+      reflect:"오늘 배운 지식 중 가장 기억에 남는 것은 무엇인가요?" }
+  ],
+  thinker: [
+    { id:"thi1", title:"딜레마 생각하기", atl:"사고 기술", suggested:["perspective","responsibility"],
+      scenario:"'친구가 준비물을 안 가져와서 내 것을 빌려달라고 하는데, 나도 하나뿐이다. 어떻게 할까?' 이 상황에서 서로 다른 두 입장을 각각 논리적으로 적어보세요.",
+      mission:"탐구 활동: 두 입장을 합쳐 절충안을 하나 만들어보세요.",
+      reflect:"각 입장의 약점은 무엇이었나요?" },
+    { id:"thi2", title:"거꾸로 생각하기", atl:"사고 기술", suggested:["perspective","change"],
+      scenario:"'쉬는 시간이 길수록 좋다'는 의견에 대해, 이번엔 반대 입장(짧을수록 좋다)에서 주장을 만들어보세요.",
+      mission:"탐구 활동: 반대 입장을 써보니 원래 생각이 바뀌었는지 적어보세요.",
+      reflect:"내가 믿지 않던 주장을 써보니 어떤 기분이었나요?" },
+    { id:"thi3", title:"문제의 뿌리", atl:"사고 기술", suggested:["causation","responsibility"],
+      scenario:"우리 반(또는 학교)에서 자주 일어나는 작은 문제 하나를 고르고, 그 원인을 3단계 이상 파고들어 분석해보세요.",
+      mission:"탐구 활동: 그 문제를 해결할 창의적인 아이디어를 2개 이상 제안해보세요.",
+      reflect:"원인을 깊이 파고드니 처음 생각과 달랐던 점은?" },
+    { id:"thi4", title:"창의적 다른 용도", atl:"사고 기술", suggested:["function","change"],
+      scenario:"평범한 물건(예: 클립, 종이컵) 하나를 정해, 원래 용도가 아닌 새로운 쓰임새를 최대한 많이 적어보세요.",
+      mission:"탐구 활동: 그중 가장 창의적인 아이디어 하나를 실제로 시도해보세요.",
+      reflect:"어떤 아이디어가 가장 의외였나요?" }
+  ],
+  communicator: [
+    { id:"com1", title:"1분 스피치", atl:"의사소통 기술", suggested:["form","connection"],
+      scenario:"내가 좋아하는 것에 대해 1분 동안 설명하는 내용을 적어보세요. 듣는 사람이 궁금해할 질문도 함께 예상해보세요.",
+      mission:"탐구 활동: 실제로 누군가에게 설명해 보고, 얼마나 잘 전달됐는지 적어보세요.",
+      reflect:"내 이야기를 잘 전달하기 위해 어떤 방법을 썼나요?" },
+    { id:"com2", title:"몸으로 말해요", atl:"의사소통 기술", suggested:["form","function"],
+      scenario:"말을 하지 않고 몸짓과 표정만으로 감정 하나(기쁨, 화남, 놀람 등)를 표현한다면 어떻게 할지 적어보세요.",
+      mission:"탐구 활동: 실제로 표현해보고 다른 사람이 잘 알아챘는지 확인해보세요.",
+      reflect:"말이 아닌 다른 방법으로 소통할 때 어려운 점은 무엇이었나요?" },
+    { id:"com3", title:"경청 챌린지", atl:"의사소통 기술", suggested:["perspective","reflection"],
+      scenario:"누군가 최근에 있었던 일을 이야기하는 동안, 끼어들지 않고 끝까지 듣는 연습을 해보고 느낀 점을 적어보세요.",
+      mission:"탐구 활동: 상대의 이야기에서 인상 깊었던 부분을 한 문장으로 요약해보세요.",
+      reflect:"끼어들고 싶은 마음을 참는 게 쉬웠나요, 어려웠나요?" },
+    { id:"com4", title:"설득의 기술", atl:"의사소통 기술", suggested:["causation","responsibility"],
+      scenario:"오늘 저녁 메뉴(또는 주말 활동)를 내가 원하는 대로 정하자고 설득하는 근거를 3가지 이상 적어보세요.",
+      mission:"탐구 활동: 실제로 누군가를 설득해보고, 어떤 근거가 가장 효과적이었는지 적어보세요.",
+      reflect:"어떤 근거가 가장 설득력 있었나요?" }
+  ],
+  principled: [
+    { id:"pri1", title:"솔직함의 딜레마", atl:"사회적 기술", suggested:["perspective","responsibility"],
+      scenario:"친구의 새 머리 스타일이 별로인데 친구는 '어때?'라고 물어봐요. 솔직하게 말할지, 배려해서 돌려 말할지 생각해보세요.",
+      mission:"탐구 활동: 솔직함과 배려를 동시에 지키는 대답을 만들어보세요.",
+      reflect:"정직과 배려가 부딪힐 때 나는 어떤 기준으로 결정하나요?" },
+    { id:"pri2", title:"규칙은 왜 있을까", atl:"사고 기술", suggested:["causation","responsibility"],
+      scenario:"우리 반의 규칙 하나를 골라, 그 규칙이 왜 필요한지, 없다면 어떤 일이 생길지 생각해보세요.",
+      mission:"탐구 활동: 그 규칙을 더 좋게 바꿀 방법이 있다면 제안해보세요.",
+      reflect:"규칙을 지키는 것과 이유를 이해하는 것, 어떤 게 더 중요할까요?" },
+    { id:"pri3", title:"들켰을 때", atl:"자기관리 기술", suggested:["responsibility","reflection"],
+      scenario:"내가 실수로 규칙을 어겼는데 아무도 못 봤다면 어떻게 할지 솔직하게 생각해보세요.",
+      mission:"탐구 활동: 실수를 인정하고 책임지는 나만의 원칙을 한 문장으로 적어보세요.",
+      reflect:"책임지는 행동이 어려운 이유는 무엇일까요?" },
+    { id:"pri4", title:"공정한 심판", atl:"사회적 기술", suggested:["perspective","responsibility"],
+      scenario:"게임 중 친한 친구가 규칙을 살짝 어겼어요. 심판이라면 어떻게 할지 생각해보세요.",
+      mission:"탐구 활동: 친분과 공정함을 모두 지킬 방법을 찾아보세요.",
+      reflect:"공정함을 지키는 것이 왜 신뢰를 만드는 걸까요?" }
+  ],
+  "open-minded": [
+    { id:"opn1", title:"낯선 음식 이야기", atl:"조사 기술", suggested:["perspective","form"],
+      scenario:"한 번도 먹어보지 못한 다른 나라 음식을 하나 정해, 그 음식을 먹는 사람들의 마음으로 소개하는 글을 적어보세요.",
+      mission:"탐구 활동: 실제로 그 음식에 대해 찾아보고 새로 안 사실을 적어보세요.",
+      reflect:"낯선 것을 상상하며 설명해보니 어떤 느낌이었나요?" },
+    { id:"opn2", title:"입장 바꿔 생각하기", atl:"사회적 기술", suggested:["perspective","reflection"],
+      scenario:"최근에 나와 의견이 달랐던 사람을 떠올리고, 그 사람의 입장이 되어 그 의견을 대신 설명해보세요.",
+      mission:"탐구 활동: 그 사람 입장에서 써보니 이해되는 부분이 있었는지 적어보세요.",
+      reflect:"다른 사람의 관점으로 말해보는 것이 왜 어려웠나요, 혹은 쉬웠나요?" },
+    { id:"opn3", title:"전통 vs 새로움", atl:"사고 기술", suggested:["change","perspective"],
+      scenario:"오래된 전통(예: 명절 인사법)과 새로운 방식 중 무엇을 따를지 양쪽 입장에서 생각해보세요.",
+      mission:"탐구 활동: 전통과 새로움을 함께 존중하는 방법을 하나 제안해보세요.",
+      reflect:"다른 생각을 가진 사람과 이야기할 때 나는 어떻게 반응하나요?" },
+    { id:"opn4", title:"편견 찾기", atl:"사고 기술", suggested:["causation","reflection"],
+      scenario:"'남자는 ~해야 한다', '여자는 ~해야 한다'처럼 우리도 모르게 가진 편견을 하나 찾아 적어보세요.",
+      mission:"탐구 활동: 그 편견이 사실이 아닌 이유를 찾아보세요.",
+      reflect:"내 생각 속에 있던 편견을 발견했을 때 기분이 어땠나요?" }
+  ],
+  caring: [
+    { id:"car1", title:"오늘의 도움", atl:"사회적 기술", suggested:["responsibility","causation"],
+      scenario:"오늘 주변에서 도움이 필요해 보였던 사람을 떠올리고, 어떻게 도와줄 수 있었을지 생각해보세요.",
+      mission:"탐구 활동: 내일 실제로 작은 도움을 한 가지 실천해보고 결과를 적어보세요.",
+      reflect:"도움을 주고받을 때 어떤 감정을 느꼈나요?" },
+    { id:"car2", title:"마음 읽기", atl:"사회적 기술", suggested:["perspective","reflection"],
+      scenario:"누군가 최근에 속상했던 일을 이야기한다면, 판단하지 않고 그 마음에 공감하는 말을 적어보세요.",
+      mission:"탐구 활동: '그랬구나, 많이 힘들었겠다' 같은 공감 문장을 3개 만들어보세요.",
+      reflect:"판단 대신 공감만 해주는 것이 왜 어려웠나요?" },
+    { id:"car3", title:"다르게 힘든 친구", atl:"사회적 기술", suggested:["perspective","responsibility"],
+      scenario:"나와 다른 이유로 힘들어하는 친구(예: 몸이 불편한 친구, 전학 온 친구)에게 필요한 배려를 생각해보세요.",
+      mission:"탐구 활동: 그 배려 중 오늘 바로 실천할 수 있는 것 하나를 골라보세요.",
+      reflect:"배려는 모두에게 똑같은 모습일까요, 다른 모습일까요?" },
+    { id:"car4", title:"세상을 바꾸는 작은 행동", atl:"자기관리 기술", suggested:["responsibility","change"],
+      scenario:"우리 주변(학교, 동네)에서 더 나아졌으면 하는 문제 하나를 정해, 내가 할 수 있는 작은 실천을 브레인스토밍해보세요.",
+      mission:"탐구 활동: 그중 하나를 이번 주 안에 실제로 해보기로 약속해보세요.",
+      reflect:"작은 행동도 세상을 바꿀 수 있다고 생각하나요? 왜 그런가요?" }
+  ],
+  "risk-taker": [
+    { id:"risk1", title:"실패 돌아보기", atl:"자기관리 기술", suggested:["reflection","causation"],
+      scenario:"최근에 겪은 실패나 실수를 부끄러워하지 않고 떠올려, 그 도전 자체의 의미를 적어보세요.",
+      mission:"탐구 활동: 그 실패에서 배운 점을 한 가지 찾아 적어보세요.",
+      reflect:"실패를 이야기하는 게 왜 용기가 필요한 일일까요?" },
+    { id:"risk2", title:"두려움 목록", atl:"자기관리 기술", suggested:["causation","change"],
+      scenario:"평소 시도하고 싶었지만 무서워서 못 했던 일을 떠올리고, 왜 무서운지 적어보세요.",
+      mission:"탐구 활동: 그 일을 아주 작은 단계로 쪼개어 오늘 할 수 있는 첫걸음 하나를 정해보세요.",
+      reflect:"두려움을 작은 단계로 나누니 어떤 느낌이 들었나요?" },
+    { id:"risk3", title:"즉석 발표", atl:"의사소통 기술", suggested:["form","function"],
+      scenario:"준비 없이 30초 동안 말할 수 있는 아무 주제나 하나 정해, 즉석 발표 내용을 적어보세요.",
+      mission:"탐구 활동: 실제로 소리 내어 발표해보세요.",
+      reflect:"준비 없이 도전할 때 내 마음속에서 어떤 일이 일어났나요?" },
+    { id:"risk4", title:"새로운 규칙 만들기", atl:"사고 기술", suggested:["change","function"],
+      scenario:"우리가 아는 놀이 하나의 규칙을 완전히 새롭게 바꾼다면 어떻게 바꿀지 적어보세요.",
+      mission:"탐구 활동: 새로 만든 규칙으로 직접 한 번 놀아보세요.",
+      reflect:"익숙한 것을 바꿔볼 때 어떤 점이 재미있었나요?" }
+  ],
+  balanced: [
+    { id:"bal1", title:"하루 돌아보기", atl:"자기관리 기술", suggested:["reflection","change"],
+      scenario:"오늘 하루 몸, 마음, 공부 중 어디에 시간을 가장 많이 썼는지 돌아보세요.",
+      mission:"탐구 활동: 내일은 부족했던 영역에 10분을 더 써보기로 계획을 세워보세요.",
+      reflect:"균형이 무너지면 몸과 마음에 어떤 신호가 오나요?" },
+    { id:"bal2", title:"쉼의 방법", atl:"자기관리 기술", suggested:["form","function"],
+      scenario:"나만의 스트레스 해소법이 무엇인지, 언제 가장 효과적인지 적어보세요.",
+      mission:"탐구 활동: 그 방법 중 하나를 오늘 직접 시도해보세요.",
+      reflect:"쉬는 것도 노력이 필요하다고 생각하나요?" },
+    { id:"bal3", title:"시간 나누기 계획", atl:"자기관리 기술", suggested:["form","change"],
+      scenario:"하루 24시간을 공부, 놀이, 잠, 가족 시간 등으로 나눈다면 어떻게 나눌지 나만의 계획표를 만들어보세요.",
+      mission:"탐구 활동: 계획표에서 가장 바꾸고 싶은 부분 하나를 골라보세요.",
+      reflect:"균형 잡힌 하루란 나에게 어떤 모습인가요?" },
+    { id:"bal4", title:"감정 온도계", atl:"자기관리 기술", suggested:["reflection","causation"],
+      scenario:"오늘 내 감정을 온도계처럼 표현한다면 몇 도인지, 왜 그런지 적어보세요.",
+      mission:"탐구 활동: 온도를 편안하게 만들 방법 하나를 찾아보세요.",
+      reflect:"내 감정 온도를 스스로 알아차리는 게 왜 중요할까요?" }
+  ],
+  reflective: [
+    { id:"ref1", title:"오늘의 배움", atl:"사고 기술", suggested:["reflection","connection"],
+      scenario:"오늘 하루 중 가장 크게 배운 점 하나를 떠올리고, 그것을 어떻게 알게 됐는지 적어보세요.",
+      mission:"탐구 활동: 그 배움을 한 문장으로 요약해 노트에 적어보세요.",
+      reflect:"배운 것을 적어보니 생각이 더 정리되었나요?" },
+    { id:"ref2", title:"실수 다시 보기", atl:"자기관리 기술", suggested:["causation","reflection"],
+      scenario:"최근에 한 실수 하나를 떠올리고, 그때로 돌아간다면 어떻게 다르게 할지 적어보세요.",
+      mission:"탐구 활동: 비슷한 상황이 다시 온다면 쓸 수 있는 나만의 전략을 하나 만들어보세요.",
+      reflect:"실수를 돌아보는 것이 왜 성장에 도움이 될까요?" },
+    { id:"ref3", title:"강점과 약점", atl:"자기관리 기술", suggested:["reflection","form"],
+      scenario:"내가 생각하는 나의 강점과 약점을 적어보세요.",
+      mission:"탐구 활동: 다른 사람에게 내가 몰랐던 나의 강점을 하나 물어보세요.",
+      reflect:"다른 사람이 본 나의 모습은 내가 아는 모습과 같았나요?" },
+    { id:"ref4", title:"1년 후의 나", atl:"자기관리 기술", suggested:["change","reflection"],
+      scenario:"1년 후의 내가 지금의 나에게 해주고 싶은 말을 상상해서 편지처럼 적어보세요.",
+      mission:"탐구 활동: 그 말을 이루기 위해 이번 주에 할 수 있는 작은 행동 하나를 정해보세요.",
+      reflect:"미래의 나를 상상하니 지금 무엇을 다르게 하고 싶어졌나요?" }
+  ]
+};
+
+const LEVEL_LABELS = ["씨앗 Lv.1", "새싹 Lv.2", "새싹 Lv.2", "나무 Lv.3", "열매 Lv.4 완료!"];
+function levelLabel(done, total) { return LEVEL_LABELS[Math.min(done, total)]; }
+
+const STORAGE_KEY = "ib_thinking_progress_v1";
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
+}
+function saveProgress() { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+function traitProgress(id) { return progress[id] || (progress[id] = { done: [], journal: {} }); }
+
+let progress = loadProgress();
+let selected = [];
+let queue = [];
+let queueIndex = 0;
+let selectedConcept = null;
+
+function paramWeak() {
+  const p = new URLSearchParams(location.search).get('weak');
+  if (!p) return [];
+  return p.split(',').map(s => s.trim()).filter(id => PROFILE_MAP[id]);
+}
+selected = paramWeak().slice(0, MAX_SELECT);
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderPicker() {
+  const chips = PROFILES.map(p => {
+    const tp = traitProgress(p.id);
+    const total = CARDS[p.id].length;
+    const checked = selected.includes(p.id);
+    const disabled = !checked && selected.length >= MAX_SELECT;
+    return `<button class="trait-chip ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}" style="--tc:${p.color}; --tc-tint:${p.color}1a"
+      ${disabled ? 'disabled' : ''} onclick="toggleTrait('${p.id}')">
+      <span class="trait-check"></span>
+      <span class="row1"><span>${p.emoji}</span><span>${p.name}</span></span>
+      <span class="lvl">${levelLabel(tp.done.length, total)} · ${tp.done.length}/${total}</span>
+    </button>`;
+  }).join('');
+  document.getElementById('root').innerHTML = `
+    <h1 class="page-title">🧠 IB 질문 씽킹게임</h1>
+    <p class="page-sub">IB PYP 학습자상 진단에서 상대적으로 부족했던 영역을, IB의 <b>핵심 개념(Key Concepts)</b>을 렌즈 삼아 스스로 좋은 탐구 질문을 만들어보며 키우는 씽킹게임이에요. 키우고 싶은 학습자상을 최대 ${MAX_SELECT}개까지 골라보세요.</p>
+    <div class="card-box">
+      <div class="section-label">키우고 싶은 영역 선택</div>
+      <div class="trait-grid">${chips}</div>
+      <p class="select-hint">${selected.length}/${MAX_SELECT}개 선택됨</p>
+      <button class="start-btn" ${selected.length === 0 ? 'disabled' : ''} onclick="renderHowto()">다음 →</button>
+    </div>`;
+}
+function toggleTrait(id) {
+  const i = selected.indexOf(id);
+  if (i >= 0) selected.splice(i, 1);
+  else if (selected.length < MAX_SELECT) selected.push(id);
+  renderPicker();
+}
+
+function renderHowto() {
+  document.getElementById('root').innerHTML = `
+    <h1 class="page-title">IB 핵심 개념으로 질문 만들기</h1>
+    <p class="page-sub">IB PYP는 8가지 핵심 개념(Key Concepts)을 렌즈로 삼아 좋은 탐구 질문을 만들도록 가르쳐요. 아래 4단계로 진행해요.</p>
+    <div class="card-box">
+      <div class="howto-steps">
+        <div class="howto-step"><span class="howto-num">1</span><span>오늘의 탐구 상황을 읽어요.</span></div>
+        <div class="howto-step"><span class="howto-num">2</span><span>8가지 핵심 개념 중, 이 상황에 어울리는 렌즈를 골라요.</span></div>
+        <div class="howto-step"><span class="howto-num">3</span><span>그 렌즈로 나만의 탐구 질문을 만들어요.</span></div>
+        <div class="howto-step"><span class="howto-num">4</span><span>탐구 활동을 해보고, 배운 점을 성찰해요.</span></div>
+      </div>
+      <button class="start-btn" onclick="startQueue()">카드 뽑기 시작 →</button>
+    </div>`;
+}
+
+function startQueue() {
+  let cards = [];
+  selected.forEach(id => {
+    const tp = traitProgress(id);
+    CARDS[id].forEach(c => cards.push({ ...c, profileId: id, done: tp.done.includes(c.id) }));
+  });
+  queue = shuffle(cards.filter(c => !c.done)).concat(shuffle(cards.filter(c => c.done)));
+  queueIndex = 0;
+  if (queue.length === 0) { renderSummary(); return; }
+  renderCard();
+}
+
+function renderCard() {
+  const c = queue[queueIndex];
+  const p = PROFILE_MAP[c.profileId];
+  const tp = traitProgress(c.profileId);
+  const saved = tp.journal[c.id] || {};
+  selectedConcept = saved.concept || c.suggested[0];
+
+  const conceptChips = KEY_CONCEPTS.map(k => {
+    const suggested = c.suggested.includes(k.id) ? 'suggested' : '';
+    const sel = selectedConcept === k.id ? 'selected' : '';
+    return `<button class="concept-chip ${suggested} ${sel}" style="--tc:${p.color}; --tc-tint:${p.color}1a" onclick="pickConcept('${k.id}')">
+      <span class="concept-emoji">${k.emoji}</span><span>${k.name}</span>
+    </button>`;
+  }).join('');
+
+  let trail = '<div class="trail">';
+  for (let i = 0; i < queue.length; i++) {
+    const state = i < queueIndex ? 'done' : '';
+    trail += `<div class="trail-dot ${state}" style="--tc:${p.color}"></div>`;
+    if (i < queue.length - 1) trail += `<div class="trail-seg" style="--tc:${p.color}; --fill:${i < queueIndex ? '100%' : '0%'}"></div>`;
+  }
+  trail += '</div>';
+
+  document.getElementById('root').innerHTML = `
+    ${trail}
+    <div class="card-box" style="--tc:${p.color}">
+      <span class="card-tag" style="--tc:${p.color}; --tc-tint:${p.color}1a">${p.emoji} ${p.name} · ${queueIndex + 1}/${queue.length}</span>
+      <span class="atl-tag">ATL · ${c.atl}</span>
+      <h2 class="card-title">${c.title}</h2>
+      <div class="section-label">1 · 탐구 상황</div>
+      <p class="scenario-text">${c.scenario}</p>
+      <div class="section-label">2 · 핵심 개념 렌즈 고르기 <span style="color:var(--tc,var(--accent))">★ 추천</span></div>
+      <div class="concept-grid">${conceptChips}</div>
+      <p class="concept-hint" id="conceptHint">${CONCEPT_MAP[selectedConcept].hint}</p>
+      <textarea class="question-input" id="questionInput" placeholder="이 렌즈로 나만의 탐구 질문을 만들어보세요...">${saved.question || ''}</textarea>
+      <div class="section-label">3 · 탐구 활동</div>
+      <p class="mission-text">${c.mission}</p>
+      <div class="section-label">4 · 성찰</div>
+      <p class="reflect-q">${c.reflect}</p>
+      <textarea class="journal-input" id="journalInput" placeholder="나의 생각을 적어보세요...">${saved.reflect || ''}</textarea>
+      <button class="start-btn" style="margin-top:1rem" onclick="completeCard()">완료! 다음 카드 →</button>
+    </div>`;
+}
+function pickConcept(id) {
+  selectedConcept = id;
+  document.getElementById('conceptHint').textContent = CONCEPT_MAP[id].hint;
+  document.querySelectorAll('.concept-chip').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+function completeCard() {
+  const c = queue[queueIndex];
+  const tp = traitProgress(c.profileId);
+  const question = document.getElementById('questionInput').value.trim();
+  const reflectText = document.getElementById('journalInput').value.trim();
+  if (!tp.done.includes(c.id)) tp.done.push(c.id);
+  tp.journal[c.id] = { concept: selectedConcept, question, reflect: reflectText };
+  saveProgress();
+  showToast('카드 완료! 🎉');
+  queueIndex++;
+  if (queueIndex >= queue.length) renderSummary();
+  else renderCard();
+}
+
+function renderSummary() {
+  const rows = selected.map(id => {
+    const p = PROFILE_MAP[id];
+    const total = CARDS[id].length;
+    const done = traitProgress(id).done.length;
+    const pct = Math.round((done / total) * 100);
+    const finished = done >= total;
+    return `<div class="summary-row" style="--tc:${p.color}">
+      <span class="summary-emoji">${p.emoji}</span>
+      <div class="summary-body">
+        <div class="summary-name">${p.name}</div>
+        <div class="summary-lvl">${levelLabel(done, total)}</div>
+        <div class="progress-bar-row"><div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%; --tc:${p.color}"></div></div><span>${done}/${total}</span></div>
+      </div>
+      ${finished ? '<span class="summary-badge" style="--tc:'+p.color+'">완료</span>' : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('root').innerHTML = `
+    <h1 class="page-title">🎉 오늘의 탐구 완료!</h1>
+    <p class="page-sub">스스로 만든 탐구 질문이 학습자상을 조금씩 키워가고 있어요. 언제든 다시 와서 새 카드를 이어갈 수 있어요.</p>
+    <div class="card-box">${rows}</div>
+    <button class="start-btn" onclick="renderPicker()">다른 영역 선택하기</button>
+    <a class="ghost-btn" href="index.html">🔍 IB 학습자상 진단 다시 하기</a>`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+renderPicker();
+</script>
+</body>
+</html>
