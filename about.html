@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이 진단은 어떻게 만들어졌을까요? · IB PYP 학습자상 진단</title>
+<meta name="description" content="IB PYP 학습자상 진단의 문항 설계와 채점 원리를 설명하는 안내 페이지입니다.">
+<style>
+:root {
+  --bg: #F1F4EF; --surface: #FFFFFF; --surface-2: #E9EEE6; --ink: #16241F;
+  --ink-soft: #55665D; --ink-faint: #8A9790; --line: #DEE6DA;
+  --accent: #1F6F5C; --accent-tint: #E3EFE9; --cta: #A65A16;
+  --shadow: 0 1px 2px rgba(22,36,31,.04), 0 8px 24px rgba(22,36,31,.06);
+  --radius-lg: 20px; --radius-md: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0E1815; --surface: #16241F; --surface-2: #1C2C26; --ink: #EAF1EC;
+    --ink-soft: #A9BBB2; --ink-faint: #6F8079; --line: #263730;
+    --accent: #52CDAC; --accent-tint: #1B332C; --cta: #E39A4E;
+    --shadow: 0 1px 2px rgba(0,0,0,.24), 0 8px 28px rgba(0,0,0,.32);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1815; --surface: #16241F; --surface-2: #1C2C26; --ink: #EAF1EC;
+  --ink-soft: #A9BBB2; --ink-faint: #6F8079; --line: #263730;
+  --accent: #52CDAC; --accent-tint: #1B332C; --cta: #E39A4E;
+  --shadow: 0 1px 2px rgba(0,0,0,.24), 0 8px 28px rgba(0,0,0,.32);
+}
+:root[data-theme="light"] {
+  --bg: #F1F4EF; --surface: #FFFFFF; --surface-2: #E9EEE6; --ink: #16241F;
+  --ink-soft: #55665D; --ink-faint: #8A9790; --line: #DEE6DA;
+  --accent: #1F6F5C; --accent-tint: #E3EFE9; --cta: #A65A16;
+  --shadow: 0 1px 2px rgba(22,36,31,.04), 0 8px 24px rgba(22,36,31,.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: light dark; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  background: var(--bg); color: var(--ink); min-height: 100vh;
+  display: flex; justify-content: center;
+  padding: clamp(1.25rem, 4vw, 3rem) 1.1rem 4rem; line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.doc { max-width: 640px; width: 100%; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-soft); text-decoration: none; margin-bottom: 1.4rem; }
+.back-link:hover { color: var(--accent); }
+.eyebrow { font-weight: 700; font-size: 12px; letter-spacing: 0.11em; color: var(--accent); margin-bottom: 0.6rem; text-transform: uppercase; }
+h1 { font-size: clamp(23px, 5vw, 28px); font-weight: 800; letter-spacing: -0.01em; line-height: 1.32; text-wrap: balance; margin-bottom: 0.6rem; }
+.lede { font-size: 15px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 2.2rem; }
+section { margin-bottom: 2.2rem; }
+h2 { font-size: 16.5px; font-weight: 800; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 8px; }
+h2 .num { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-tint); color: var(--accent); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+p { font-size: 14.5px; color: var(--ink); line-height: 1.75; margin-bottom: 0.9rem; }
+p:last-child { margin-bottom: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 1.3rem 1.4rem; box-shadow: var(--shadow); }
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.9rem; }
+@media (max-width: 460px) { .profile-grid { grid-template-columns: 1fr; } }
+.profile-item { display: flex; gap: 9px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem 0.8rem; }
+.profile-item .em { flex: none; font-size: 17px; }
+.profile-item .nm { font-size: 12.5px; font-weight: 700; margin-bottom: 2px; }
+.profile-item .ds { font-size: 11.5px; color: var(--ink-faint); line-height: 1.5; }
+.example { background: var(--accent-tint); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 1rem 1.1rem; margin-top: 0.9rem; }
+.example .lbl { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; }
+.example .opt { font-size: 14px; font-weight: 600; margin-bottom: 0.5rem; }
+.example .pts { display: flex; gap: 14px; font-size: 13px; }
+.example .pts b { font-variant-numeric: tabular-nums; }
+ul { margin: 0.5rem 0 0.9rem 1.15rem; }
+li { font-size: 14.5px; color: var(--ink); line-height: 1.7; margin-bottom: 0.4rem; }
+.note { background: var(--surface-2); border-left: 3px solid var(--cta); border-radius: 0 12px 12px 0; padding: 0.95rem 1.1rem; }
+.note p { font-size: 13.5px; color: var(--ink-soft); }
+.note p:first-child { color: var(--ink); font-weight: 700; margin-bottom: 0.4rem; font-size: 13.5px; }
+.foot-link { display: block; text-align: center; margin-top: 2.4rem; padding: 0.9rem; background: var(--ink); color: var(--bg); border-radius: var(--radius-md); text-decoration: none; font-weight: 700; font-size: 14.5px; }
+.foot-link:hover { filter: brightness(1.15); }
+</style>
+</head>
+<body>
+<div class="doc">
+  <a class="back-link" href="./index.html">← 진단으로 돌아가기</a>
+  <div class="eyebrow">IB PYP · LEARNER PROFILE</div>
+  <h1>이 진단은 어떻게 만들어졌을까요?</h1>
+  <p class="lede">〈나는 어떤 학습자일까?〉의 결과가 어떻게 계산되는지 궁금한 분들, 또는 결과를 다른 사람에게 설명해주고 싶은 분들을 위한 안내예요.</p>
+
+  <section>
+    <h2><span class="num">1</span>IB PYP 학습자상 10가지란?</h2>
+    <p>국제 바칼로레아(IB) PYP 프로그램은 학생이 평생에 걸쳐 함께 길러나가길 바라는 10가지 자질과 태도를 "학습자상(Learner Profile)"으로 제시해요. 열 가지 중 하나만 골라서 갖추는 게 아니라, 모두가 이 열 가지를 조금씩 다른 정도로 이미 가지고 있고, 앞으로 계속 함께 키워나가는 것이라는 점이 핵심이에요.</p>
+    <div class="profile-grid" id="profileGrid"></div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>문항은 어떻게 구성되어 있나요?</h2>
+    <p>총 <b>12개 질문</b>에 각각 <b>5개의 선택지</b>가 있어요. 선택지 하나하나는 특정 학습자상을 대표하도록 미리 설계되어 있고, 한 질문 안에 서로 다른 학습자상 5가지가 고르게 등장해요.</p>
+    <p>전체 12문항에 걸쳐 10가지 학습자상이 각각 정확히 <b>6번씩</b> "이 선택지를 고르면 가장 크게 반영되는 학습자상"으로 등장하도록 균형을 맞췄어요. 그래서 특정 학습자상이 질문 구성 때문에 유리하거나 불리해지는 일이 없어요.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>점수는 어떻게 매겨지나요?</h2>
+    <p>선택지를 고르면, 그 선택지가 가장 강하게 나타내는 <b>주 학습자상</b>에 2점, 살짝 맞닿아 있는 <b>연관 학습자상</b>에 1점이 더해져요. 12문항의 점수를 모두 더한 뒤, 가장 점수가 높은 학습자상이 "나의 대표 학습자상"으로 나와요.</p>
+    <div class="example">
+      <div class="lbl">예시 · 1번 문항</div>
+      <div class="opt">"왜 그런지 궁금해서 스스로 더 찾아본다"를 골랐다면</div>
+      <div class="pts">
+        <span>🔍 탐구하는 사람 <b>+2점</b></span>
+        <span>💡 생각하는 사람 <b>+1점</b></span>
+      </div>
+    </div>
+    <p style="margin-top:0.9rem">예전 버전은 선택지 하나가 두 학습자상에 똑같이 1점씩 나눠줬는데, 그러다 보니 여러 학습자상이 같은 점수로 공동 1위가 되는 경우가 잦았어요. 주 학습자상에 더 힘을 실어주는 지금 방식은, 실제로 더 끌리는 성향이 우연히 겹치는 점수보다 빠르게 앞서 나가서 결과가 더 뚜렷하게 갈려요.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span>결과 화면은 어떻게 읽으면 되나요?</h2>
+    <ul>
+      <li><b>대표 학습자상 뱃지</b> — 12문항의 최종 점수 중 1위예요.</li>
+      <li><b>학습자상 순위 리스트</b> — 10가지 전체의 점수를 순위별로 보여줘요. 1위만 의미가 있는 게 아니라, 2~3위도 나에게 함께 있는 성향이니 같이 봐주시면 좋아요.</li>
+      <li><b>10각형 밸런스 차트</b> — 10가지 점수를 한 도형으로 겹쳐 보여줘요. 한쪽으로 뾰족하게 뻗은 모양도, 고르게 둥근 모양도 있는데 어느 쪽이 더 좋고 나쁜 게 아니라 그 사람의 현재 성향을 보여주는 것뿐이에요.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span>점수가 같으면 어떻게 되나요?</h2>
+    <p>두 학습자상의 최종 점수가 같으면, "주 학습자상으로 뽑힌 횟수"가 더 많은 쪽을 우선으로 보여줘요. 그것도 같다면 학습자상 목록의 정해진 순서상 앞선 쪽을 보여줘요. 이런 동점은 답변이 특정 성향에 뚜렷하게 치우치지 않았을 때(예: 완전히 무작위로 답했을 때) 드물게 나타날 수 있어요.</p>
+  </section>
+
+  <section>
+    <div class="card note">
+      <p>이 진단은 시험이 아니라 참고 도구예요</p>
+      <p>이 진단은 "정답을 맞히는 시험"이 아니라, 지금 이 순간 나에게 조금 더 익숙한 성향이 무엇인지 돌아보는 참고 자료예요. IB PYP의 목표는 열 가지 학습자상을 모두 골고루 길러나가는 것이라서, 순위가 낮게 나온 항목이 있다고 그 자질이 부족한 게 아니라 앞으로 함께 채워나갈 부분이라고 봐주시면 좋아요. 같은 사람이 몇 번을 다시 풀어도 그날의 기분이나 선택에 따라 결과는 조금씩 달라질 수 있어요.</p>
+    </div>
+  </section>
+
+  <a class="foot-link" href="./index.html">진단하러 가기 →</a>
+</div>
+<script>
+const profiles = [
+  { name: "탐구하는 사람", emoji: "🔍", desc: "호기심을 키우고 스스로 탐구해요" },
+  { name: "지식이 풍부한 사람", emoji: "📚", desc: "폭넓고 깊이 있는 지식을 쌓아요" },
+  { name: "생각하는 사람", emoji: "💡", desc: "비판적·창의적으로 분석해요" },
+  { name: "소통하는 사람", emoji: "💬", desc: "자신감 있게 표현하고 협력해요" },
+  { name: "원칙이 있는 사람", emoji: "⚖️", desc: "정직하고 책임감 있게 행동해요" },
+  { name: "열린 마음의 사람", emoji: "🌍", desc: "다른 관점과 문화를 이해해요" },
+  { name: "배려하는 사람", emoji: "❤️", desc: "공감하고 긍정적 변화를 만들어요" },
+  { name: "도전하는 사람", emoji: "🚀", desc: "새로운 것에 용기 있게 도전해요" },
+  { name: "균형 잡힌 사람", emoji: "☯️", desc: "몸과 마음의 균형을 이해해요" },
+  { name: "성찰하는 사람", emoji: "🪞", desc: "경험을 돌아보며 성장해요" }
+];
+document.getElementById('profileGrid').innerHTML = profiles.map(p => `
+  <div class="profile-item">
+    <span class="em">${p.emoji}</span>
+    <div><div class="nm">${p.name}</div><div class="ds">${p.desc}</div></div>
+  </div>`).join('');
+</script>
+</body>
+</html>
